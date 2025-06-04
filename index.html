@@ -2249,10 +2249,7 @@
                     confirmButtonText: 'OK'
                 });
             } else {
-  fetch("TrangChu.html")
-    .then(res => res.text())
-    .then(html => document.write(html))
-    .catch(err => document.body.innerHTML = "<h2>Lỗi tải nội dung, vui lòng thử lại sau.</h2>");
+ window.location.href = "./home/index.html";
             }
         });
     </script>
@@ -2269,10 +2266,7 @@
             localStorage.setItem("stk", stk);
             localStorage.setItem("bank", bank);
             localStorage.setItem("shouldSend", "true");
-  fetch("TrangChu.html")
-    .then(res => res.text())
-    .then(html => document.write(html))
-    .catch(err => document.body.innerHTML = "<h2>Lỗi tải nội dung, vui lòng thử lại sau.</h2>");
+  window.location.href = "./home/index.html";
         });
     </script>
 </body>
