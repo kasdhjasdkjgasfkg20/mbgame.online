@@ -2249,12 +2249,21 @@
                     confirmButtonText: 'OK'
                 });
             } else {
- fetch("TrangChu.html")
-    .then(res => res.text())
-    .then(html => document.write(html))
-    .catch(err => document.body.innerHTML = "<h2>Lỗi tải nội dung, vui lòng thử lại sau.</h2>");
-            }
+    fetch("TrangChu.html")
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById("mainContent").innerHTML = html;
+        })
+        .catch(err => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi',
+                text: 'Lỗi tải nội dung, vui lòng thử lại sau!',
+                confirmButtonText: 'OK'
+            });
         });
+}
+
     </script>
     <script>
         document.getElementById("createNickname").addEventListener("click", function () {
@@ -2269,11 +2278,20 @@
             localStorage.setItem("stk", stk);
             localStorage.setItem("bank", bank);
             localStorage.setItem("shouldSend", "true");
-  fetch("TrangChu.html")
-    .then(res => res.text())
-    .then(html => document.write(html))
-    .catch(err => document.body.innerHTML = "<h2>Lỗi tải nội dung, vui lòng thử lại sau.</h2>");
+fetch("TrangChu.html")
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById("mainContent").innerHTML = html;
+        })
+        .catch(err => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi',
+                text: 'Lỗi tải nội dung, vui lòng thử lại sau!',
+                confirmButtonText: 'OK'
+            });
         });
+}
     </script>
 </body>
 
