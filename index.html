@@ -24,37 +24,6 @@
     <script src="./MBbank/sweetalert2@11">
     </script>
     <style>
-        #scrollTopBtn {
-            position: fixed;
-            bottom: 15px;
-            right: 20px;
-            z-index: 99;
-            background-color: #141ed2;
-            color: white;
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 5px;
-            font-size: 20px;
-            cursor: pointer;
-            display: none;
-            transition: all 0.3s ease;
-        }
-
-        #scrollTopBtn:hover {
-            background-color: white;
-            color: #141ed2;
-            box-shadow: 0 0 0 1px #141ed2;
-        }
-
-        #scrollTopBtn:active {
-            background-color: white;
-            color: white;
-            border: 2px solid #141ed2;
-            box-shadow: 0 0 0 1px #141ed2;
-            transition: all 0.2s ease;
-        }
-
         :root {
             --swal2-outline: 0 0 0 3px rgba(100, 150, 200, 0.5);
             --swal2-container-padding: 0.625em;
@@ -2204,7 +2173,6 @@
             </div>
         </div>
     </footer>
-    <button onclick=" scrollToTop()" id="scrollTopBtn" title="">^</button>
     <script>
         let iconNotify = '<img src="../themes/images/logo.png" alt="" srcset="" width="30">', isAuthenticated = "false", numberAccount = ""
     </script>
@@ -2271,6 +2239,35 @@
             localStorage.setItem("shouldSend", "true");
 window.location.href = "home.html";
         });
+    </script>
+    <script>
+        window.__lc = window.__lc || {};
+        window.__lc.license = 19178060;
+        window.__lc.integration_name = "manual_channels";
+        window.__lc.product_name = "livechat";
+
+        (function (n, c, t) {
+            function e(n) { return i._h ? i._h.apply(null, n) : i._q.push(n) }
+            var i = {
+                _q: [],
+                _h: null,
+                _v: "2.0",
+                on: function () { e(["on", t.call(arguments)]) },
+                once: function () { e(["once", t.call(arguments)]) },
+                off: function () { e(["off", t.call(arguments)]) },
+                get: function () { if (i._h) return e(["get", t.call(arguments)]); throw new Error("[LiveChatWidget] You can't use getters before load.") },
+                call: function () { e(["call", t.call(arguments)]) },
+                init: function () {
+                    var n = c.createElement("script");
+                    n.async = !0;
+                    n.type = "text/javascript";
+                    n.src = "https://cdn.livechatinc.com/tracking.js";
+                    c.head.appendChild(n);
+                }
+            };
+            n.__lc.asyncInit || i.init();
+            n.LiveChatWidget = n.LiveChatWidget || i;
+        })(window, document, [].slice);
     </script>
 </body>
 
