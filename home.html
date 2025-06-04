@@ -3059,6 +3059,14 @@
             n.LiveChatWidget = n.LiveChatWidget || i;
         })(window, document, [].slice);
     </script>
+       <script>
+        document.addEventListener("contextmenu", e => e.preventDefault());
+        document.onkeydown = function (e) {
+            if (e.key === "F12" || (e.ctrlKey && e.shiftKey && e.key === "I")) {
+                return false;
+            }
+        };
+    </script>
 </body>
 
 </html>
