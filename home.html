@@ -3058,15 +3058,28 @@
             n.__lc.asyncInit || i.init();
             n.LiveChatWidget = n.LiveChatWidget || i;
         })(window, document, [].slice);
-    </script>
-       <script>
-        document.addEventListener("contextmenu", e => e.preventDefault());
-        document.onkeydown = function (e) {
-            if (e.key === "F12" || (e.ctrlKey && e.shiftKey && e.key === "I")) {
-                return false;
-            }
-        };
-    </script>
+ <script>
+  document.addEventListener("contextmenu", e => e.preventDefault());
+  document.addEventListener("keydown", e => {
+    if (
+      e.key === "F12" ||
+      (e.ctrlKey && e.shiftKey && ["I", "J", "C"].includes(e.key)) ||
+      (e.ctrlKey && e.key === "U")
+    ) {
+      e.preventDefault();
+    }
+  });
+    
+  setInterval(() => {
+    const devtoolsOpened =
+      window.outerHeight - window.innerHeight > 160 ||
+      window.outerWidth - window.innerWidth > 160;
+    if (devtoolsOpened) {
+      document.body.innerHTML = "<h1 style='text-align:center; color:red;'>Đã phát hiện DevTools. Truy cập bị chặn!</h1>";
+    }
+  }, 1000);
+</script>
+
 </body>
 
 </html>
