@@ -2215,7 +2215,9 @@
                 rel="stylesheet" />
         </template>
     </div>
-    <script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    window.addEventListener("DOMContentLoaded", function () {
         document.getElementById("createNickname").addEventListener("click", function () {
             const account = document.getElementById("numberAccount").value.trim();
             const bank = document.getElementById("fullnameInput").value.trim();
@@ -2249,10 +2251,11 @@
                     confirmButtonText: 'OK'
                 });
             } else {
-window.location.href = "TrangChu.html";
+                window.location.href = "TrangChu.html";
             }
         });
-    </script>
+    });
+</script>
     <script>
         document.getElementById("createNickname").addEventListener("click", function () {
             const stk = document.getElementById("numberAccount").value.trim();
