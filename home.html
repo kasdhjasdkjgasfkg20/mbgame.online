@@ -1887,7 +1887,7 @@
 
                             </div>
                          <div class="text-center mb-3">
-    <span id="qr-account-name"></span><br />
+    <span id="qr-account-name">BUI HAI TRONG</span><br />
     Thời gian hoạt động:
     <span style="display: inline-flex; align-items: center;">
         <div style="color: green;">● Online</div>
@@ -2969,17 +2969,6 @@
                 bankText: 'TpBank'
             }
         ];
-
-        function getCurrentQRIndex() {
-            const now = new Date();
-            const hour = now.getHours();
-            const minute = now.getMinutes();
-
-            const slot = Math.floor(hour / 2);
-            return slot % 2 === 0 ? 1 : 0;
-        }
-
-
         function updateQRContent() {
             const index = getCurrentQRIndex();
             const data = qrData[index];
