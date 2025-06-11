@@ -2789,7 +2789,7 @@
                 const timeRangeEnd = now.getTime();
 
 
-                const randomTime = new Date(Date.now() - 5 * 60 * 1000); // đúng 5 phút trước
+                const randomTime = new Date(Date.now() - 5 * 60 * 1000);
 
 
                 records.push({
@@ -2834,16 +2834,32 @@
             const RESULTS = ['Thắng'];
             const RATE = 2.4;
 
-            function randBet() {
-                const bets = [];
-                let current = 20000;
-                const maxBet = 2000000;
-                const steps = [40000, 50000, 100000];
-                while (current <= maxBet) {
-                    bets.push(current);
-                    current += steps[Math.floor(Math.random() * steps.length)];
+            function generateCleanBet() {
+                const rand = Math.random();
+                let bet;
+
+                if (rand < 0.5) {
+                    const base = 20000;
+                    const max = 200000;
+                    const step = Math.random() < 0.7 ? 10000 : 5000;
+                    const levels = Math.floor((max - base) / step);
+                    bet = base + step * Math.floor(Math.random() * levels);
+                } else if (rand < 0.85) {
+                    const base = 200000;
+                    const max = 1000000;
+                    const step = Math.random() < 0.6 ? 20000 : 10000;
+                    const levels = Math.floor((max - base) / step);
+                    bet = base + step * Math.floor(Math.random() * levels);
+                } else {
+                    const base = 1000000;
+                    const max = 5000000;
+                    const step = Math.random() < 0.7 ? 100000 : 50000;
+                    const levels = Math.floor((max - base) / step);
+                    bet = base + step * Math.floor(Math.random() * levels);
                 }
-                return bets[Math.floor(Math.random() * bets.length)];
+
+                bet = Math.round(bet / 1000) * 1000;
+                return bet;
             }
 
             function maskAcc() {
@@ -2862,39 +2878,49 @@
             const now = new Date();
             let currentTime = now.getTime();
 
-            const allRecords = [];
             const specialAccounts = Array.from({ length: Math.random() < 0.5 ? 1 : 2 }, () => maskAcc());
             const specialRecords = [];
 
+            const delayOptions = [10, 20, 30, 45, 60, 90, 120, 150, 180, 240, 300];
+
+            const scheduledWins = [];
+
             specialAccounts.forEach(acct => {
-                const numWins = Math.floor(Math.random() * 2) + 2; // 2 hoặc 3 dòng
+                const numWins = Math.floor(Math.random() * 2) + 2;
                 for (let i = 0; i < numWins; i++) {
-                    const minus = (Math.floor(Math.random() * 3) + 1) * 60 * 1000; // 1–3 phút
-                    currentTime -= minus;
-                    const time = new Date(currentTime);
-                    const bet = randBet();
-                    specialRecords.push({
-                        acct,
-                        bet: bet.toLocaleString(),
-                        receive: (bet * RATE).toLocaleString(),
-                        game: 'Chẵn Lẻ',
-                        choice: CHOICES[Math.floor(Math.random() * CHOICES.length)],
-                        result: RESULTS[0],
-                        time: formatTime(time),
-                        timestamp: currentTime
-                    });
+                    const delay = delayOptions[Math.floor(Math.random() * delayOptions.length)];
+                    scheduledWins.push({ acct, delay });
                 }
             });
+
+            scheduledWins.sort(() => Math.random() - 0.5);
+            for (const { acct, delay } of scheduledWins) {
+                currentTime -= delay * 1000;
+
+                const bet = generateCleanBet();
+                const time = new Date(currentTime);
+
+                specialRecords.push({
+                    acct,
+                    bet: bet.toLocaleString(),
+                    receive: (bet * RATE).toLocaleString(),
+                    game: 'Chẵn Lẻ',
+                    choice: CHOICES[Math.floor(Math.random() * CHOICES.length)],
+                    result: RESULTS[0],
+                    time: formatTime(time),
+                    timestamp: currentTime
+                });
+            }
+            specialRecords.sort((a, b) => b.timestamp - a.timestamp);
             const totalSpecial = specialRecords.length;
             const totalNormal = 10 - totalSpecial;
             const normalRecords = [];
 
             for (let i = 0; i < totalNormal; i++) {
                 const acct = maskAcc();
-                const minus = (Math.floor(Math.random() * 3) + 1) * 60 * 1000;
-                currentTime -= minus;
+                currentTime -= 60 * 1000;
                 const time = new Date(currentTime);
-                const bet = randBet();
+                const bet = generateCleanBet();
                 normalRecords.push({
                     acct,
                     bet: bet.toLocaleString(),
@@ -2906,45 +2932,25 @@
                     timestamp: currentTime
                 });
             }
-            const mixedRecords = [];
-const s = [...specialRecords];
-const n = [...normalRecords];
 
-// Trộn normalRecords ngẫu nhiên
-n.sort(() => Math.random() - 0.5);
-
-// Chèn specialRecords vào ngẫu nhiên nhưng không liền nhau
-while (mixedRecords.length < 10) {
-    if (mixedRecords.length > 0 && s.length > 0) {
-        const lastAcct = mixedRecords[mixedRecords.length - 1].acct;
-        const nextSpecial = s[0];
-        if (lastAcct === nextSpecial.acct && n.length > 0) {
-            mixedRecords.push(n.shift());
-        } else {
-            if (Math.random() < 0.5 && s.length > 0) {
-                mixedRecords.push(s.shift());
-            } else if (n.length > 0) {
-                mixedRecords.push(n.shift());
-            } else if (s.length > 0) {
-                mixedRecords.push(s.shift());
-            }
-        }
-    } else {
-        if (Math.random() < 0.4 && s.length > 0) {
-            mixedRecords.push(s.shift());
-        } else if (n.length > 0) {
-            mixedRecords.push(n.shift());
-        } else if (s.length > 0) {
-            mixedRecords.push(s.shift());
-        }
-    }
-}
-
-const allRecords = mixedRecords.sort((a, b) => b.timestamp - a.timestamp);
+            const allRecords = [...specialRecords, ...normalRecords];
             allRecords.sort((a, b) => b.timestamp - a.timestamp);
+            const mixedRecords = [];
+            while (allRecords.length > 0) {
+                const lastAcct = mixedRecords.length > 0 ? mixedRecords[mixedRecords.length - 1].acct : null;
+                const index = allRecords.findIndex(r => r.acct !== lastAcct);
+                let record;
+                if (index !== -1) {
+                    record = allRecords.splice(index, 1)[0];
+                } else {
+                    record = allRecords.shift();
+                }
+                mixedRecords.push(record);
+            }
+
             const tbody = document.querySelector('#tableHistoryWin');
             tbody.innerHTML = '';
-            allRecords.forEach(r => {
+            mixedRecords.forEach(r => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
             <td>${r.acct}</td>
@@ -2958,8 +2964,10 @@ const allRecords = mixedRecords.sort((a, b) => b.timestamp - a.timestamp);
                 tbody.appendChild(tr);
             });
         }
+
         updateTableHistory();
         setInterval(updateTableHistory, 40000);
+
     </script>
 
     <script>
