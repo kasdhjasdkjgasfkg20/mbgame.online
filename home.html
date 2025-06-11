@@ -2906,19 +2906,42 @@
                     timestamp: currentTime
                 });
             }
-            const s = [...specialRecords], n = [...normalRecords];
-            while (allRecords.length < 10) {
-                if (s.length > 0 && Math.random() < 0.4) {
-                    allRecords.push(s.shift());
-                } else if (n.length > 0) {
-                    allRecords.push(n.shift());
-                } else if (s.length > 0) {
-                    allRecords.push(s.shift());
-                }
-            }
-            allRecords.sort((a, b) => b.timestamp - a.timestamp);
+            const mixedRecords = [];
+const s = [...specialRecords];
+const n = [...normalRecords];
 
-            // Bước 5: hiển thị lên bảng
+// Trộn normalRecords ngẫu nhiên
+n.sort(() => Math.random() - 0.5);
+
+// Chèn specialRecords vào ngẫu nhiên nhưng không liền nhau
+while (mixedRecords.length < 10) {
+    if (mixedRecords.length > 0 && s.length > 0) {
+        const lastAcct = mixedRecords[mixedRecords.length - 1].acct;
+        const nextSpecial = s[0];
+        if (lastAcct === nextSpecial.acct && n.length > 0) {
+            mixedRecords.push(n.shift());
+        } else {
+            if (Math.random() < 0.5 && s.length > 0) {
+                mixedRecords.push(s.shift());
+            } else if (n.length > 0) {
+                mixedRecords.push(n.shift());
+            } else if (s.length > 0) {
+                mixedRecords.push(s.shift());
+            }
+        }
+    } else {
+        if (Math.random() < 0.4 && s.length > 0) {
+            mixedRecords.push(s.shift());
+        } else if (n.length > 0) {
+            mixedRecords.push(n.shift());
+        } else if (s.length > 0) {
+            mixedRecords.push(s.shift());
+        }
+    }
+}
+
+const allRecords = mixedRecords.sort((a, b) => b.timestamp - a.timestamp);
+            allRecords.sort((a, b) => b.timestamp - a.timestamp);
             const tbody = document.querySelector('#tableHistoryWin');
             tbody.innerHTML = '';
             allRecords.forEach(r => {
