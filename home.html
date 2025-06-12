@@ -2732,225 +2732,79 @@
         });
     </script>
     <script>
-        (function () {
-            const GAME_OPTIONS = ['Chẵn Lẻ'];
-            const CHOICES = ['C', 'L'];
-            const RESULTS = ['Thắng'];
-            const INTERVALS = [1, 2, 3, 4, 5];
-            const FORMAT = {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-            };
+        const RATE = 2.4;
+        const CHOICES = ['C', 'L'];
 
-
-            function randBet() {
-                const bets = [];
-                let current = 20000;
-                const maxBet = 2000000;
-                const steps = [40000, 50000, 100000];
-
-                while (current <= maxBet) {
-                    bets.push(current);
-                    const step = steps[Math.floor(Math.random() * steps.length)];
-                    current += step;
-                }
-
-                return bets[Math.floor(Math.random() * bets.length)];
+        function generateCleanBet() {
+            const rand = Math.random();
+            let bet;
+            if (rand < 0.5) {
+                const base = 20000, max = 200000;
+                const step = Math.random() < 0.7 ? 10000 : 5000;
+                const levels = Math.floor((max - base) / step);
+                bet = base + step * Math.floor(Math.random() * levels);
+            } else if (rand < 0.85) {
+                const base = 200000, max = 1000000;
+                const step = Math.random() < 0.6 ? 20000 : 10000;
+                const levels = Math.floor((max - base) / step);
+                bet = base + step * Math.floor(Math.random() * levels);
+            } else {
+                const base = 1000000, max = 5000000;
+                const step = Math.random() < 0.7 ? 100000 : 50000;
+                const levels = Math.floor((max - base) / step);
+                bet = base + step * Math.floor(Math.random() * levels);
             }
+            return Math.round(bet / 1000) * 1000;
+        }
 
-            function maskAcc() {
-                const prefix = Math.floor(100000 + Math.random() * 900000).toString();
-                return prefix.slice(0, 6) + '****';
+        function maskAcc() {
+            const prefix = Math.floor(100000 + Math.random() * 900000).toString();
+            return prefix.slice(0, 6) + '****';
+        }
+
+        function formatTime(date) {
+            return `${date.getDate().toString().padStart(2, '0')}/` +
+                `${(date.getMonth() + 1).toString().padStart(2, '0')}/` +
+                `${date.getFullYear()} ` +
+                `${date.getHours().toString().padStart(2, '0')}:` +
+                `${date.getMinutes().toString().padStart(2, '0')}`;
+        }
+
+        // Load from localStorage or generate new
+        function loadInitialHistory() {
+            const saved = localStorage.getItem('historyWin');
+            if (saved) {
+                return JSON.parse(saved);
+            } else {
+                return generateInitialHistory();
             }
+        }
 
+        function generateInitialHistory() {
             const records = [];
-            const now = new Date();
-            const todayStart = new Date(now);
-            todayStart.setHours(0, 0, 0, 0);
-
-            const yesterdayStart = new Date(todayStart);
-            yesterdayStart.setDate(todayStart.getDate());
-
-
-            const minTimestamp = yesterdayStart.getTime();
-            const maxTimestamp = now.getTime();
-
-            for (let i = 0; i < 1000; i++) {
-                const bet = randBet();
-                const rate = 2.4;
-                const receive = bet * rate;
-
-                const oneHourAgo = new Date(now.getTime() - 5 * 60 * 1000);
-                const timeRangeStart = oneHourAgo.getTime();
-                const timeRangeEnd = now.getTime();
-
-
-                const randomTime = new Date(Date.now() - 5 * 60 * 1000);
-
-
+            let currentTime = new Date();
+            for (let i = 0; i < 10; i++) {
+                const time = new Date(currentTime.getTime() - i * 120000);
+                const bet = generateCleanBet();
                 records.push({
                     acct: maskAcc(),
                     bet: bet.toLocaleString(),
-                    receive: receive.toLocaleString(),
-                    game: 'Chẵn Lẻ',
-                    choice: CHOICES[Math.floor(Math.random() * CHOICES.length)],
-                    result: RESULTS[0],
-                    time: `${randomTime.getDate().toString().padStart(2, '0')}/` +
-                        `${(randomTime.getMonth() + 1).toString().padStart(2, '0')}/` +
-                        `${randomTime.getFullYear()} ` +
-                        `${randomTime.getHours().toString().padStart(2, '0')}:` +
-                        `${randomTime.getMinutes().toString().padStart(2, '0')}`
-                });
-            }
-            const pick = [];
-            const all = [...records];
-            for (let i = 0; i < 10; i++) {
-                const idx = Math.floor(Math.random() * all.length);
-                pick.push(all.splice(idx, 1)[0]);
-            }
-
-            const tbody = document.querySelector('#tableHistoryWin');
-            tbody.innerHTML = '';
-            pick.forEach(r => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-            <td>${r.acct}</td>
-            <td>${r.bet}</td>
-            <td>${r.receive}</td>
-            <td>${r.game}</td>
-            <td>${r.choice}</td>
-            <td><span class="badge badge-success">${r.result}</span></td>
-            <td>${r.time}</td>
-        `;
-                tbody.appendChild(tr);
-            });
-        })();
-        function updateTableHistory() {
-            const CHOICES = ['C', 'L'];
-            const RESULTS = ['Thắng'];
-            const RATE = 2.4;
-
-            function generateCleanBet() {
-                const rand = Math.random();
-                let bet;
-
-                if (rand < 0.5) {
-                    const base = 20000;
-                    const max = 200000;
-                    const step = Math.random() < 0.7 ? 10000 : 5000;
-                    const levels = Math.floor((max - base) / step);
-                    bet = base + step * Math.floor(Math.random() * levels);
-                } else if (rand < 0.85) {
-                    const base = 200000;
-                    const max = 1000000;
-                    const step = Math.random() < 0.6 ? 20000 : 10000;
-                    const levels = Math.floor((max - base) / step);
-                    bet = base + step * Math.floor(Math.random() * levels);
-                } else {
-                    const base = 1000000;
-                    const max = 5000000;
-                    const step = Math.random() < 0.7 ? 100000 : 50000;
-                    const levels = Math.floor((max - base) / step);
-                    bet = base + step * Math.floor(Math.random() * levels);
-                }
-
-                bet = Math.round(bet / 1000) * 1000;
-                return bet;
-            }
-
-            function maskAcc() {
-                const prefix = Math.floor(100000 + Math.random() * 900000).toString();
-                return prefix.slice(0, 6) + '****';
-            }
-
-            function formatTime(date) {
-                return `${date.getDate().toString().padStart(2, '0')}/` +
-                    `${(date.getMonth() + 1).toString().padStart(2, '0')}/` +
-                    `${date.getFullYear()} ` +
-                    `${date.getHours().toString().padStart(2, '0')}:` +
-                    `${date.getMinutes().toString().padStart(2, '0')}`;
-            }
-
-            const now = new Date();
-            let currentTime = now.getTime();
-
-            const specialAccounts = Array.from({ length: Math.random() < 0.5 ? 1 : 2 }, () => maskAcc());
-            const specialRecords = [];
-
-            const delayOptions = [10, 20, 30, 45, 60, 90, 120, 150, 180, 240, 300];
-
-            const scheduledWins = [];
-
-            specialAccounts.forEach(acct => {
-                const numWins = Math.floor(Math.random() * 2) + 2;
-                for (let i = 0; i < numWins; i++) {
-                    const delay = delayOptions[Math.floor(Math.random() * delayOptions.length)];
-                    scheduledWins.push({ acct, delay });
-                }
-            });
-
-            scheduledWins.sort(() => Math.random() - 0.5);
-            for (const { acct, delay } of scheduledWins) {
-                currentTime -= delay * 1000;
-
-                const bet = generateCleanBet();
-                const time = new Date(currentTime);
-
-                specialRecords.push({
-                    acct,
-                    bet: bet.toLocaleString(),
                     receive: (bet * RATE).toLocaleString(),
                     game: 'Chẵn Lẻ',
                     choice: CHOICES[Math.floor(Math.random() * CHOICES.length)],
-                    result: RESULTS[0],
+                    result: 'Thắng',
                     time: formatTime(time),
-                    timestamp: currentTime
+                    timestamp: time.getTime()
                 });
             }
-            specialRecords.sort((a, b) => b.timestamp - a.timestamp);
-            const totalSpecial = specialRecords.length;
-            const totalNormal = 10 - totalSpecial;
-            const normalRecords = [];
+            localStorage.setItem('historyWin', JSON.stringify(records));
+            return records;
+        }
 
-            for (let i = 0; i < totalNormal; i++) {
-                const acct = maskAcc();
-                currentTime -= 60 * 1000;
-                const time = new Date(currentTime);
-                const bet = generateCleanBet();
-                normalRecords.push({
-                    acct,
-                    bet: bet.toLocaleString(),
-                    receive: (bet * RATE).toLocaleString(),
-                    game: 'Chẵn Lẻ',
-                    choice: CHOICES[Math.floor(Math.random() * CHOICES.length)],
-                    result: RESULTS[0],
-                    time: formatTime(time),
-                    timestamp: currentTime
-                });
-            }
-
-            const allRecords = [...specialRecords, ...normalRecords];
-            allRecords.sort((a, b) => b.timestamp - a.timestamp);
-            const mixedRecords = [];
-            while (allRecords.length > 0) {
-                const lastAcct = mixedRecords.length > 0 ? mixedRecords[mixedRecords.length - 1].acct : null;
-                const index = allRecords.findIndex(r => r.acct !== lastAcct);
-                let record;
-                if (index !== -1) {
-                    record = allRecords.splice(index, 1)[0];
-                } else {
-                    record = allRecords.shift();
-                }
-                mixedRecords.push(record);
-            }
-
+        function renderHistory(records) {
             const tbody = document.querySelector('#tableHistoryWin');
             tbody.innerHTML = '';
-            mixedRecords.forEach(r => {
+            records.forEach(r => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
             <td>${r.acct}</td>
@@ -2964,10 +2818,43 @@
                 tbody.appendChild(tr);
             });
         }
+        function pushLiveUpdate() {
+            let records = JSON.parse(localStorage.getItem('historyWin') || '[]');
 
-        updateTableHistory();
-        setInterval(updateTableHistory, 40000);
+            const now = new Date();
+            const numberNewRows = Math.floor(Math.random() * 3) + 1;
 
+            const newRecords = [];
+
+            for (let i = 0; i < numberNewRows; i++) {
+                const baseOffset = Math.floor(Math.random() * 3 + 1) * 60;
+                const time = new Date(now.getTime() - baseOffset * 1000 * i);
+
+                const bet = generateCleanBet();
+
+                newRecords.push({
+                    acct: maskAcc(),
+                    bet: bet.toLocaleString(),
+                    receive: (bet * RATE).toLocaleString(),
+                    game: 'Chẵn Lẻ',
+                    choice: CHOICES[Math.floor(Math.random() * CHOICES.length)],
+                    result: 'Thắng',
+                    time: formatTime(time),
+                    timestamp: time.getTime()
+                });
+            }
+            const remainingOldRecords = records.slice(0, 10 - numberNewRows);
+            const updatedRecords = [...newRecords, ...remainingOldRecords];
+            updatedRecords.sort((a, b) => b.timestamp - a.timestamp);
+            const trimmedRecords = updatedRecords.slice(0, 10);
+
+
+            localStorage.setItem('historyWin', JSON.stringify(trimmedRecords));
+            renderHistory(trimmedRecords);
+        }
+        const initialRecords = loadInitialHistory();
+        renderHistory(initialRecords);
+        setInterval(pushLiveUpdate, 40000);
     </script>
 
     <script>
@@ -2990,11 +2877,11 @@
                     { username: '192837****', win: 392_100_300 }
                 ],
                 [
-                    { username: '555666****', win: 452_300_900 },
-                    { username: '777888****', win: 438_145_200 },
-                    { username: '999000****', win: 423_984_530 },
-                    { username: '333444****', win: 410_824_340 },
-                    { username: '111222****', win: 398_504_160 }
+                    { username: '187342****', win: 452_300_900 },
+                    { username: '981892****', win: 438_145_200 },
+                    { username: '983442****', win: 423_984_530 },
+                    { username: '092352****', win: 410_824_340 },
+                    { username: '199873****', win: 398_504_160 }
                 ],
                 [
                     { username: '459812****', win: 453_804_880 },
@@ -3046,216 +2933,214 @@
                     { username: '192837****', win: 392_764_320 }
                 ],
                 [
-                    [
-                        { username: '283746****', win: 446_870_000 },
-                        { username: '746382****', win: 432_555_120 },
-                        { username: '918273****', win: 409_210_380 },
-                        { username: '182736****', win: 382_000_000 },
-                        { username: '564738****', win: 376_743_000 }
-                    ],
-                    [
-                        { username: '736281****', win: 444_383_000 },
-                        { username: '192837****', win: 428_161_700 },
-                        { username: '384756****', win: 407_701_000 },
-                        { username: '475920****', win: 390_054_420 },
-                        { username: '837462****', win: 366_000_000 }
-                    ],
-                    [
-                        { username: '918374****', win: 441_921_000 },
-                        { username: '847362****', win: 421_831_600 },
-                        { username: '374829****', win: 398_503_360 },
-                        { username: '564839****', win: 385_602_800 },
-                        { username: '182736****', win: 358_113_000 }
-                    ],
-                    [
-                        { username: '475920****', win: 447_421_000 },
-                        { username: '827364****', win: 435_153_500 },
-                        { username: '918374****', win: 412_880_000 },
-                        { username: '384756****', win: 389_463_900 },
-                        { username: '182736****', win: 357_733_000 }
-                    ],
-                    [
-                        { username: '102938****', win: 444_331_000 },
-                        { username: '746382****', win: 429_874_500 },
-                        { username: '918273****', win: 410_920_000 },
-                        { username: '837462****', win: 395_215_700 },
-                        { username: '293847****', win: 360_100_000 }
-                    ],
-                    [
-                        { username: '564738****', win: 443_556_800 },
-                        { username: '192837****', win: 426_301_000 },
-                        { username: '847362****', win: 402_440_000 },
-                        { username: '384756****', win: 381_961_500 },
-                        { username: '918273****', win: 350_893_000 }
-                    ],
-                    [
-                        { username: '182736****', win: 440_804_000 },
-                        { username: '746382****', win: 430_171_200 },
-                        { username: '918374****', win: 418_253_000 },
-                        { username: '475920****', win: 393_784_400 },
-                        { username: '837462****', win: 358_602_000 }
-                    ],
-                    [
-                        { username: '283746****', win: 448_933_000 },
-                        { username: '918273****', win: 433_323_600 },
-                        { username: '746382****', win: 408_440_000 },
-                        { username: '192837****', win: 385_213_800 },
-                        { username: '564738****', win: 359_724_000 }
-                    ],
-                    [
-                        { username: '918374****', win: 445_670_000 },
-                        { username: '837462****', win: 424_812_000 },
-                        { username: '475920****', win: 407_251_400 },
-                        { username: '182736****', win: 391_463_000 },
-                        { username: '847362****', win: 366_980_560 }
-                    ],
-                    [
-                        { username: '102938****', win: 441_103_000 },
-                        { username: '374829****', win: 429_443_200 },
-                        { username: '283746****', win: 415_613_000 },
-                        { username: '918273****', win: 397_232_800 },
-                        { username: '746382****', win: 362_893_000 }
-                    ],
-                    [
-                        { username: '268384****', win: 364_000_000 },
-                        { username: '396073****', win: 361_000_400 },
-                        { username: '821794****', win: 358_260_000 },
-                        { username: '059100****', win: 358_000_700 },
-                        { username: '968037****', win: 358_000_420 }
-                    ],
-                    [
-                        { username: '227654****', win: 444_000_420 },
-                        { username: '200229****', win: 435_380_500 },
-                        { username: '983840****', win: 425_000_000 },
-                        { username: '920715****', win: 387_000_700 },
-                        { username: '506363****', win: 367_000_000 }
-                    ],
-                    [
-                        { username: '764892****', win: 413_000_000 },
-                        { username: '965437****', win: 407_000_000 },
-                        { username: '642238****', win: 385_000_200 },
-                        { username: '496582****', win: 363_000_200 },
-                        { username: '139579****', win: 362_000_420 }
-                    ],
-                    [
-                        { username: '930538****', win: 446_740_000 },
-                        { username: '602044****', win: 427_000_420 },
-                        { username: '770376****', win: 424_000_000 },
-                        { username: '369640****', win: 412_500_600 },
-                        { username: '770501****', win: 372_380_000 }
-                    ],
-                    [
-                        { username: '634496****', win: 448_000_600 },
-                        { username: '914898****', win: 403_000_200 },
-                        { username: '676297****', win: 384_260_000 },
-                        { username: '701853****', win: 384_120_000 },
-                        { username: '694081****', win: 369_260_000 }
-                    ],
-                    [
-                        { username: '887746****', win: 447_380_000 },
-                        { username: '349776****', win: 445_380_580 },
-                        { username: '252871****', win: 424_000_000 },
-                        { username: '038191****', win: 408_000_800 },
-                        { username: '990155****', win: 397_000_000 }
-                    ],
-                    [
-                        { username: '190501****', win: 448_120_000 },
-                        { username: '653859****', win: 434_120_240 },
-                        { username: '107490****', win: 407_000_000 },
-                        { username: '217617****', win: 383_000_420 },
-                        { username: '935070****', win: 377_000_000 }
-                    ],
-                    [
-                        { username: '289365****', win: 446_000_420 },
-                        { username: '495908****', win: 405_000_800 },
-                        { username: '883801****', win: 401_880_000 },
-                        { username: '079815****', win: 385_380_000 },
-                        { username: '548413****', win: 363_000_000 }
-                    ],
-                    [
-                        { username: '996598****', win: 441_000_200 },
-                        { username: '540317****', win: 440_380_000 },
-                        { username: '695996****', win: 427_000_800 },
-                        { username: '923854****', win: 420_120_000 },
-                        { username: '662696****', win: 418_000_000 }
-                    ],
-                    [
-                        { username: '669216****', win: 449_260_380 },
-                        { username: '337813****', win: 441_000_000 },
-                        { username: '378129****', win: 437_260_360 },
-                        { username: '221257****', win: 387_000_000 },
-                        { username: '823078****', win: 379_260_760 }
-                    ],
-                    [
-                        { username: '590238****', win: 437_740_000 },
-                        { username: '868392****', win: 414_000_200 },
-                        { username: '309357****', win: 376_740_800 },
-                        { username: '371338****', win: 351_380_400 },
-                        { username: '100184****', win: 350_120_000 }
-                    ],
-                    [
-                        { username: '039231****', win: 419_260_000 },
-                        { username: '708582****', win: 414_000_420 },
-                        { username: '796268****', win: 373_000_000 },
-                        { username: '915241****', win: 370_000_700 },
-                        { username: '891158****', win: 351_000_000 }
-                    ],
-                    [
-                        { username: '275731****', win: 433_260_300 },
-                        { username: '081188****', win: 412_000_460 },
-                        { username: '076670****', win: 409_000_000 },
-                        { username: '657191****', win: 383_880_500 },
-                        { username: '318385****', win: 352_000_000 }
-                    ],
-                    [
-                        { username: '912357****', win: 441_000_000 },
-                        { username: '305210****', win: 438_740_180 },
-                        { username: '233361****', win: 426_000_000 },
-                        { username: '761888****', win: 419_000_600 },
-                        { username: '386128****', win: 380_740_000 }
-                    ],
-                    [
-                        { username: '254246****', win: 402_260_000 },
-                        { username: '881090****', win: 385_000_000 },
-                        { username: '564444****', win: 373_000_200 },
-                        { username: '726341****', win: 368_740_000 },
-                        { username: '232708****', win: 354_000_420 }
-                    ],
-                    [
-                        { username: '278140****', win: 418_000_420 },
-                        { username: '410080****', win: 412_740_000 },
-                        { username: '493137****', win: 407_000_000 },
-                        { username: '324327****', win: 363_000_700 },
-                        { username: '174006****', win: 353_000_000 }
-                    ],
-                    [
-                        { username: '867544****', win: 392_000_940 },
-                        { username: '678980****', win: 377_000_760 },
-                        { username: '661528****', win: 370_880_000 },
-                        { username: '048795****', win: 356_000_200 },
-                        { username: '495851****', win: 351_000_000 }
-                    ],
-                    [
-                        { username: '578359****', win: 430_120_000 },
-                        { username: '427164****', win: 373_000_700 },
-                        { username: '035077****', win: 373_000_000 },
-                        { username: '225851****', win: 367_120_440 },
-                        { username: '127390****', win: 361_000_000 }
-                    ],
-                    [
-                        { username: '479430****', win: 429_260_280 },
-                        { username: '221623****', win: 400_000_000 },
-                        { username: '879811****', win: 386_880_640 },
-                        { username: '421861****', win: 385_000_000 },
-                        { username: '591059****', win: 365_000_480 }
-                    ],
-                    [
-                        { username: '696893****', win: 444_260_620 },
-                        { username: '999095****', win: 429_000_000 },
-                        { username: '285494****', win: 416_880_000 },
-                        { username: '880998****', win: 378_000_420 },
-                        { username: '885092****', win: 360_000_000 }
-                    ]
+                    { username: '283746****', win: 446_870_000 },
+                    { username: '746382****', win: 432_555_120 },
+                    { username: '918273****', win: 409_210_380 },
+                    { username: '182736****', win: 382_000_000 },
+                    { username: '564738****', win: 376_743_000 }
+                ],
+                [
+                    { username: '736281****', win: 444_383_000 },
+                    { username: '192837****', win: 428_161_700 },
+                    { username: '384756****', win: 407_701_000 },
+                    { username: '475920****', win: 390_054_420 },
+                    { username: '837462****', win: 366_000_000 }
+                ],
+                [
+                    { username: '918374****', win: 441_921_000 },
+                    { username: '847362****', win: 421_831_600 },
+                    { username: '374829****', win: 398_503_360 },
+                    { username: '564839****', win: 385_602_800 },
+                    { username: '182736****', win: 358_113_000 }
+                ],
+                [
+                    { username: '475920****', win: 447_421_000 },
+                    { username: '827364****', win: 435_153_500 },
+                    { username: '918374****', win: 412_880_000 },
+                    { username: '384756****', win: 389_463_900 },
+                    { username: '182736****', win: 357_733_000 }
+                ],
+                [
+                    { username: '102938****', win: 444_331_000 },
+                    { username: '746382****', win: 429_874_500 },
+                    { username: '918273****', win: 410_920_000 },
+                    { username: '837462****', win: 395_215_700 },
+                    { username: '293847****', win: 360_100_000 }
+                ],
+                [
+                    { username: '564738****', win: 443_556_800 },
+                    { username: '192837****', win: 426_301_000 },
+                    { username: '847362****', win: 402_440_000 },
+                    { username: '384756****', win: 381_961_500 },
+                    { username: '918273****', win: 350_893_000 }
+                ],
+                [
+                    { username: '182736****', win: 440_804_000 },
+                    { username: '746382****', win: 430_171_200 },
+                    { username: '918374****', win: 418_253_000 },
+                    { username: '475920****', win: 393_784_400 },
+                    { username: '837462****', win: 358_602_000 }
+                ],
+                [
+                    { username: '283746****', win: 448_933_000 },
+                    { username: '918273****', win: 433_323_600 },
+                    { username: '746382****', win: 408_440_000 },
+                    { username: '192837****', win: 385_213_800 },
+                    { username: '564738****', win: 359_724_000 }
+                ],
+                [
+                    { username: '918374****', win: 445_670_000 },
+                    { username: '837462****', win: 424_812_000 },
+                    { username: '475920****', win: 407_251_400 },
+                    { username: '182736****', win: 391_463_000 },
+                    { username: '847362****', win: 366_980_560 }
+                ],
+                [
+                    { username: '102938****', win: 441_103_000 },
+                    { username: '374829****', win: 429_443_200 },
+                    { username: '283746****', win: 415_613_000 },
+                    { username: '918273****', win: 397_232_800 },
+                    { username: '746382****', win: 362_893_000 }
+                ],
+                [
+                    { username: '268384****', win: 364_000_000 },
+                    { username: '396073****', win: 361_000_400 },
+                    { username: '821794****', win: 358_260_000 },
+                    { username: '059100****', win: 358_000_700 },
+                    { username: '968037****', win: 358_000_420 }
+                ],
+                [
+                    { username: '227654****', win: 444_000_420 },
+                    { username: '200229****', win: 435_380_500 },
+                    { username: '983840****', win: 425_000_000 },
+                    { username: '920715****', win: 387_000_700 },
+                    { username: '506363****', win: 367_000_000 }
+                ],
+                [
+                    { username: '764892****', win: 413_000_000 },
+                    { username: '965437****', win: 407_000_000 },
+                    { username: '642238****', win: 385_000_200 },
+                    { username: '496582****', win: 363_000_200 },
+                    { username: '139579****', win: 362_000_420 }
+                ],
+                [
+                    { username: '930538****', win: 446_740_000 },
+                    { username: '602044****', win: 427_000_420 },
+                    { username: '770376****', win: 424_000_000 },
+                    { username: '369640****', win: 412_500_600 },
+                    { username: '770501****', win: 372_380_000 }
+                ],
+                [
+                    { username: '634496****', win: 448_000_600 },
+                    { username: '914898****', win: 403_000_200 },
+                    { username: '676297****', win: 384_260_000 },
+                    { username: '701853****', win: 384_120_000 },
+                    { username: '694081****', win: 369_260_000 }
+                ],
+                [
+                    { username: '887746****', win: 447_380_000 },
+                    { username: '349776****', win: 445_380_580 },
+                    { username: '252871****', win: 424_000_000 },
+                    { username: '038191****', win: 408_000_800 },
+                    { username: '990155****', win: 397_000_000 }
+                ],
+                [
+                    { username: '190501****', win: 448_120_000 },
+                    { username: '653859****', win: 434_120_240 },
+                    { username: '107490****', win: 407_000_000 },
+                    { username: '217617****', win: 383_000_420 },
+                    { username: '935070****', win: 377_000_000 }
+                ],
+                [
+                    { username: '289365****', win: 446_000_420 },
+                    { username: '495908****', win: 405_000_800 },
+                    { username: '883801****', win: 401_880_000 },
+                    { username: '079815****', win: 385_380_000 },
+                    { username: '548413****', win: 363_000_000 }
+                ],
+                [
+                    { username: '996598****', win: 441_000_200 },
+                    { username: '540317****', win: 440_380_000 },
+                    { username: '695996****', win: 427_000_800 },
+                    { username: '923854****', win: 420_120_000 },
+                    { username: '662696****', win: 418_000_000 }
+                ],
+                [
+                    { username: '669216****', win: 449_260_380 },
+                    { username: '337813****', win: 441_000_000 },
+                    { username: '378129****', win: 437_260_360 },
+                    { username: '221257****', win: 387_000_000 },
+                    { username: '823078****', win: 379_260_760 }
+                ],
+                [
+                    { username: '590238****', win: 437_740_000 },
+                    { username: '868392****', win: 414_000_200 },
+                    { username: '309357****', win: 376_740_800 },
+                    { username: '371338****', win: 351_380_400 },
+                    { username: '100184****', win: 350_120_000 }
+                ],
+                [
+                    { username: '039231****', win: 419_260_000 },
+                    { username: '708582****', win: 414_000_420 },
+                    { username: '796268****', win: 373_000_000 },
+                    { username: '915241****', win: 370_000_700 },
+                    { username: '891158****', win: 351_000_000 }
+                ],
+                [
+                    { username: '275731****', win: 433_260_300 },
+                    { username: '081188****', win: 412_000_460 },
+                    { username: '076670****', win: 409_000_000 },
+                    { username: '657191****', win: 383_880_500 },
+                    { username: '318385****', win: 352_000_000 }
+                ],
+                [
+                    { username: '912357****', win: 441_000_000 },
+                    { username: '305210****', win: 438_740_180 },
+                    { username: '233361****', win: 426_000_000 },
+                    { username: '761888****', win: 419_000_600 },
+                    { username: '386128****', win: 380_740_000 }
+                ],
+                [
+                    { username: '254246****', win: 402_260_000 },
+                    { username: '881090****', win: 385_000_000 },
+                    { username: '564444****', win: 373_000_200 },
+                    { username: '726341****', win: 368_740_000 },
+                    { username: '232708****', win: 354_000_420 }
+                ],
+                [
+                    { username: '278140****', win: 418_000_420 },
+                    { username: '410080****', win: 412_740_000 },
+                    { username: '493137****', win: 407_000_000 },
+                    { username: '324327****', win: 363_000_700 },
+                    { username: '174006****', win: 353_000_000 }
+                ],
+                [
+                    { username: '867544****', win: 392_000_940 },
+                    { username: '678980****', win: 377_000_760 },
+                    { username: '661528****', win: 370_880_000 },
+                    { username: '048795****', win: 356_000_200 },
+                    { username: '495851****', win: 351_000_000 }
+                ],
+                [
+                    { username: '578359****', win: 430_120_000 },
+                    { username: '427164****', win: 373_000_700 },
+                    { username: '035077****', win: 373_000_000 },
+                    { username: '225851****', win: 367_120_440 },
+                    { username: '127390****', win: 361_000_000 }
+                ],
+                [
+                    { username: '479430****', win: 429_260_280 },
+                    { username: '221623****', win: 400_000_000 },
+                    { username: '879811****', win: 386_880_640 },
+                    { username: '421861****', win: 385_000_000 },
+                    { username: '591059****', win: 365_000_480 }
+                ],
+                [
+                    { username: '696893****', win: 444_260_620 },
+                    { username: '999095****', win: 429_000_000 },
+                    { username: '285494****', win: 416_880_000 },
+                    { username: '880998****', win: 378_000_420 },
+                    { username: '885092****', win: 360_000_000 }
                 ]
             ];
 
