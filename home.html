@@ -1679,6 +1679,71 @@
             width: 100%;
         }
     </style>
+    <style>
+        .qr-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 220px;
+            aspect-ratio: 1 / 1;
+            margin: 0 auto;
+        }
+
+        .square-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .runner {
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.6));
+            stroke-dasharray: 254 594;
+        }
+
+        .runner1 {
+            animation: rotateLine1 4s linear infinite;
+        }
+
+        .runner2 {
+            animation: rotateLine2 4s linear infinite;
+        }
+
+        .qr-img {
+            position: absolute;
+            top: 4.5%;
+            left: 4.5%;
+            width: 91%;
+            height: 91%;
+            object-fit: contain;
+            z-index: 2;
+            border-radius: 10px;
+        }
+
+
+        @keyframes rotateLine1 {
+            0% {
+                stroke-dashoffset: 0;
+            }
+
+            100% {
+                stroke-dashoffset: -848;
+            }
+        }
+
+        @keyframes rotateLine2 {
+            0% {
+                stroke-dashoffset: -424;
+            }
+
+            100% {
+                stroke-dashoffset: -1272;
+            }
+        }
+    </style>
+
 </head>
 
 <body class="" style="padding-right: 0px;">
@@ -1887,9 +1952,32 @@
                                 </strong>
                             </p>
                             <div class="text-center mb-3">
-                                <img id="qr-img-main" src="./image/BHT.png" style="width: 200px" />
+                                <div class="qr-wrapper">
+                                    <svg class="square-ring" viewBox="0 0 220 220">
+                                        <defs>
+                                            <linearGradient id="led-square" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                <stop offset="0%" stop-color="red" />
+                                                <stop offset="20%" stop-color="orange" />
+                                                <stop offset="40%" stop-color="yellow" />
+                                                <stop offset="60%" stop-color="lime" />
+                                                <stop offset="80%" stop-color="magenta" />
+                                                <stop offset="100%" stop-color="red" />
+                                            </linearGradient>
+                                        </defs>
 
+                                        <!-- LED Ring 1 -->
+                                        <rect class="runner runner1" x="4" y="4" width="212" height="212"
+                                            stroke="url(#led-square)" stroke-width="4" fill="none" />
+
+                                        <!-- LED Ring 2 (offset) -->
+                                        <rect class="runner runner2" x="4" y="4" width="212" height="212"
+                                            stroke="url(#led-square)" stroke-width="4" fill="none" />
+                                    </svg>
+
+                                    <img class="qr-img" src="./image/BHT.png" alt="QR Code">
+                                </div>
                             </div>
+
                             <div class="text-center mb-3">
                                 <span id="qr-account-name">BUI HAI TRONG</span><br />
                                 Thời gian hoạt động:
@@ -1945,7 +2033,8 @@
                                 <strong>góc bên phải.</strong>
                                 </p>
                             </div>
-                            <div class="table-responsive mb-3 hiddenmb">
+                            <div class="table-responsive mb-3">
+                                <!-- hiddenmb: khi mb-3 có hiddenmb sẽ không hiển thị bảng ở mobile -->
                                 <table
                                     class="table card-table table-vcenter text-nowrap table-bordered table-striped text-center">
                                     <thead class="badge-primary text-white">
