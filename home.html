@@ -2784,7 +2784,7 @@
             const records = [];
             let currentTime = new Date();
             for (let i = 0; i < 10; i++) {
-                const time = new Date(currentTime.getTime() - i * 120000);
+                const time = new Date(currentTime.getTime() - i * 60000);
                 const bet = generateCleanBet();
                 records.push({
                     acct: maskAcc(),
