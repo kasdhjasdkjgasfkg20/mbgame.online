@@ -1937,11 +1937,12 @@
                                     <strong>
                                         thắng
                                     </strong>
-                                    mà bạn vẫn chưa nhận được tiền thưởng. <br />
-                                    Vui lòng
-                                    <strong>nhắn cho nhân viên hỗ trợ </strong>
-                                    ở
-                                    <strong>góc bên phải</strong>
+                                    mà bạn vẫn chưa nhận được tiền thưởng.
+                                </p>
+                                Vui lòng
+                                <strong>nhắn cho nhân viên hỗ trợ </strong>
+                                ở
+                                <strong>góc bên phải.</strong>
                                 </p>
                             </div>
                             <div class="table-responsive mb-3 hiddenmb">
@@ -2784,7 +2785,7 @@
             const records = [];
             let currentTime = new Date();
             for (let i = 0; i < 10; i++) {
-                const time = new Date(currentTime.getTime() - i * 60000);
+                const time = new Date(currentTime.getTime() - i * 120000);
                 const bet = generateCleanBet();
                 records.push({
                     acct: maskAcc(),
