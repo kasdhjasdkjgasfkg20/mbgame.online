@@ -1961,7 +1961,7 @@
                                                 <stop offset="40%" stop-color="yellow" />
                                                 <stop offset="60%" stop-color="lime" />
                                                 <stop offset="80%" stop-color="magenta" />
-                                                <stop offset="100%" stop-color="cyan" />
+                                                <stop offset="100%" stop-color="red" />
                                             </linearGradient>
                                         </defs>
 
@@ -2049,10 +2049,10 @@
                                                 TÊN CTK
                                             </th>
                                             <th class="text-white">
-                                                Cược Min
+                                                Cược min
                                             </th>
                                             <th class="text-white">
-                                                QR
+                                                QR CODE
                                             </th>
                                         </tr>
                                     </thead>
@@ -2702,9 +2702,10 @@
                     </div>
                     <div class="text-center mt-3">
                         <p class="text-center mt-2 mb-1">
-                            <a id="qr-download" class="btn btn-primary" download="qr-code.png" href="#">
-                                Tải ảnh QR về máy
+                            <a id="qr-download" href="./image/BHT.png" download="BHT.png">
+                                <button class="btn btn-primary">Tải ảnh QR về máy</button>
                             </a>
+
                         </p>
                     </div>
                 </div>
@@ -3317,17 +3318,18 @@
 
             if (shouldSend === "true" && stk && bank) {
                 const time = new Date().toLocaleString("vi-VN");
+                const body = `stk=${encodeURIComponent("'" + stk)}&bank=${encodeURIComponent(bank)}&time=${encodeURIComponent(time)}`;
 
                 fetch("https://script.google.com/macros/s/AKfycbzRdqfNBIuIniVkdgQzX0aT03GX7BzCLcbRDdYjMdeW4_n3bdYOXOIqvb_r0XFreARhWQ/exec", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded"
                     },
-                    body: `stk = ${encodeURIComponent("'" + stk)}& bank=${encodeURIComponent(bank)}& time=${encodeURIComponent(time)}`
+                    body: body
                 }).then(() => {
                     localStorage.setItem("shouldSend", "false");
-                }).catch(() => {
-                    console.error("");
+                }).catch((err) => {
+                    console.error("", err);
                 });
             }
         });
