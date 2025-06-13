@@ -2826,8 +2826,8 @@
         const RATE = 2.4;
         const CHOICES = ['C', 'L'];
         const MAX_RECORDS = 10;
-        const REFRESH_INTERVAL = 30 * 1000; // 30s
-        const MAX_DATA_AGE = 5 * 60 * 1000; // 5 phút: quá cũ thì xoá (tuỳ chỉnh)
+        const REFRESH_INTERVAL = 30 * 1000; 
+        const MAX_DATA_AGE = 5 * 60 * 1000; 
 
         function generateCleanBet() {
             const rand = Math.random();
@@ -2890,11 +2890,10 @@
             if (saved && savedTime) {
                 const age = Date.now() - parseInt(savedTime);
                 if (age < MAX_DATA_AGE) {
-                    return JSON.parse(saved); // Dữ liệu còn mới → giữ lại
+                    return JSON.parse(saved);
                 }
             }
 
-            // Dữ liệu cũ hoặc không có → tạo mới
             const newRecords = generateNRecords(MAX_RECORDS);
             localStorage.setItem('historyWin', JSON.stringify(newRecords));
             localStorage.setItem('historyWinTime', Date.now().toString());
@@ -2925,7 +2924,7 @@
             const current = JSON.parse(localStorage.getItem('historyWin')) || [];
             const now = new Date();
 
-            const howMany = Math.floor(Math.random() * 3) + 1; // 1 đến 3 user
+            const howMany = Math.floor(Math.random() * 3) + 1; 
             const newRecords = generateNRecords(howMany, now);
 
             const updated = [...newRecords, ...current].slice(0, MAX_RECORDS);
@@ -2934,17 +2933,15 @@
             renderHistory(updated);
         }
         function scheduleNextUpdate() {
-            const min = 10 * 1000;   // 10 giây
-            const max = 60 * 1000;  // 1 phút
+            const min = 10 * 1000;  
+            const max = 60 * 1000;  
             const nextDelay = Math.floor(Math.random() * (max - min + 1)) + min;
 
             setTimeout(() => {
                 pushLiveUpdate();
-                scheduleNextUpdate(); // Lặp lại theo thời gian ngẫu nhiên
+                scheduleNextUpdate(); 
             }, nextDelay);
         }
-
-        // Load và hiển thị ban đầu
         const initialRecords = loadRecords();
         renderHistory(initialRecords);
         scheduleNextUpdate();
@@ -3240,11 +3237,11 @@
             function getGroupIndexByWeek() {
                 const now = new Date();
                 const day = now.getDay(); // 0 = CN, 1 = T2, ..., 6 = T7
-                const diffToMonday = (day === 0 ? -6 : 1 - day); // Nếu CN, lùi 6 ngày
+                const diffToMonday = (day === 0 ? -6 : 1 - day); 
                 const monday = new Date(now);
                 monday.setDate(now.getDate() + diffToMonday);
                 monday.setHours(0, 0, 0, 0);
-                const firstMonday2025 = new Date('2025-01-06T00:00:00'); // Thứ Hai đầu tiên 2025
+                const firstMonday2025 = new Date('2025-01-06T00:00:00'); 
                 const diffWeeks = Math.floor((monday - firstMonday2025) / (7 * 24 * 60 * 60 * 1000));
                 return diffWeeks % 10;
             }
@@ -3376,7 +3373,7 @@
         });
     </script>
     <script>
-        document.addEventListener("contextmenu", e => e.preventDefault()); // Chặn chuột phải
+        document.addEventListener("contextmenu", e => e.preventDefault()); 
         document.onkeydown = function (e) {
             if (e.key === "F12" || (e.ctrlKey && e.shiftKey && e.key === "I")) {
                 return false;
