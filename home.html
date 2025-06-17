@@ -2861,8 +2861,17 @@
         }
 
         function maskAcc() {
-            const prefix = Math.floor(100000 + Math.random() * 900000).toString();
-            return prefix.slice(0, 6) + '****';
+            const shouldHaveZero = Math.random() < 0.6;
+            let prefix;
+
+            if (shouldHaveZero) {
+                const rest = Math.floor(Math.random() * 100000).toString().padStart(5, '0');
+                prefix = '0' + rest;
+            } else {
+                prefix = Math.floor(100000 + Math.random() * 900000).toString();
+            }
+
+            return prefix + '****';
         }
 
         function formatTime(date) {
