@@ -1,19 +1,61 @@
-   @media screen and (max-width: 768px) {
-    .livechat-wrapper .chat-body {
-        max-height: calc(100vh - 160px); /* trừ header + footer + khoảng trắng */
-        overflow-y: auto !important;
-        padding: 12px 12px;
-        background-color: #ffffff;
-    }
-    .livechat-wrapper .chat-toggle {
-        right: 20px !important;
-        bottom: 20px !important;
-        z-index: 1000 !important;
-    }
+/* ===== Cho mọi kích thước ≥300px và ≤768px: full màn hình ===== */
+@media screen and (max-width: 768px) and (min-width: 300px) {
+  .livechat-wrapper {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #fff;
+    border-radius: 0 !important;
+    overflow: hidden;
+    z-index: 9999;
+  }
 
-    .livechat-wrapper .chat-header {
-        border-radius: 0 !important;
-    }
+  /* Nút toggle vẫn hiện ở góc dưới phải */
+  .livechat-wrapper .chat-toggle {
+    position: absolute !important;
+    right: 20px !important;
+    bottom: 20px !important;
+    z-index: 10000 !important;
+  }
+
+  /* Phần chat-body cuộn bên trong, trừ header+footer */
+  .livechat-wrapper .chat-body {
+    max-height: calc(100vh - 160px); /* header + footer + padding */
+    overflow-y: auto !important;
+    padding: 12px;
+    background-color: #ffffff;
+  }
+
+  /* Header bo góc trên -->
+  .livechat-wrapper .chat-header {
+    border-radius: 0 !important;
+  }
+}
+
+/* ===== Ẩn hoàn toàn khi <300px ===== */
+@media screen and (max-width: 299px) {
+  .livechat-wrapper {
+    display: none !important;
+  }
+}
+
+/* ===== Phần desktop/tablet >768px (nếu cần) ===== */
+@media screen and (min-width: 769px) {
+  .livechat-wrapper {
+    bottom: 20px;
+    right: 20px;
+    width: 350px;
+    height: 500px;
+    border-radius: 8px;
+    background: #fff;
+    overflow: hidden;
+  }
+  .livechat-wrapper.open {
+    width: 400px !important;
+    height: 600px !important;
+  }
+}
 }
 
 .livechat-wrapper #chatBox {
