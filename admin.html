@@ -754,24 +754,7 @@
         </div>
     </div>
     <button onclick="toggleDarkMode()" style="position: fixed; bottom: 670px; right: 20px;">🌓</button>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <!-- ✅ App luôn phải trước -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script> <!-- Auth sau App -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyBAhJbI0ydZDGNGa1fCJZE4zYxWUZuyXL8",
-            authDomain: "chatbot-support-e1774.firebaseapp.com",
-            databaseURL: "https://chatbot-support-e1774-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "chatbot-support-e1774",
-            storageBucket: "chatbot-support-e1774.firebasestorage.app",
-            messagingSenderId: "913372631582",
-            appId: "1:913372631582:web:598a0740593bc063c5940f",
-            measurementId: "G-VG2WPPRL16"
-        };
-        // ✅ Khởi tạo
-        firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth(); // 👈 phải khai báo sau initializeApp
 
         function login() {
@@ -1105,10 +1088,10 @@
 
         navigator.serviceWorker.register('firebase-messaging-sw.js')
             .then((registration) => {
-                messaging.useServiceWorker(registration);
-
-                messaging.requestPermission()
-                    .then(() => messaging.getToken({ vapidKey: 'cxVpbG-QqYh50vihAU7sQXyJl8GNals-b5kzg_ZCAhI' }))
+                messaging.getToken({
+                    vapidKey: 'cxVpbG-QqYh50vihAU7sQXyJl8GNals-b5kzg_ZCAhI',
+                    serviceWorkerRegistration: registration
+                })
                     .then((token) => {
                         console.log('FCM Token:', token);
 
@@ -1136,10 +1119,8 @@
                     .catch((err) => {
                         console.log('Không lấy được token:', err);
                     });
-            })
-            .catch((err) => {
-                console.log('Không thể đăng ký Service Worker:', err);
             });
+
     </script>
 
     <!-- popup hiển thị ảnh -->
@@ -1179,8 +1160,11 @@
             Hệ thống kiếm tiền online tự động
         </p>
     </div>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
     <script src="firebase.js"></script>
-
 </body>
 
 </html>
