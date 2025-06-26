@@ -774,15 +774,31 @@
                 .then(() => {
                     document.getElementById("loginScreen").style.display = "none";
 
-                    // Hiện intro chuyên nghiệp
+                    // Hiện intro
                     const fullIntro = document.getElementById("fullIntro");
                     fullIntro.style.display = "flex";
 
-                    // Sau 3.5s ẩn intro, hiện giao diện chính
+                    // Sau 3.5s thì hiện giao diện chính
                     setTimeout(() => {
                         fullIntro.style.display = "none";
                         document.querySelector(".container").style.display = "grid";
                     }, 3500);
+
+                    // Đăng ký topic admin-notify
+                    messaging.getToken({
+                        vapidKey: 'BKjj1tkQXmwAIQzCN2KSL6tIhnhGBeZqS_Cr2ebv2P-3u12oFFjm8A6CHvoRnSOy9Mo3pOkM6pMDkaHkCNF9H48'
+                    }).then((token) => {
+                        fetch('https://iid.googleapis.com/iid/v1/' + token + '/rel/topics/admin-notify', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'key=AIzaSyBAhJbI0ydZDGNGa1fCJZE4zYxWUZuyXL8'
+                            }
+                        }).then(() => {
+                            console.log("Admin đã đăng ký topic admin-notify");
+                        }).catch((err) => {
+                            console.error("Lỗi khi đăng ký topic:", err);
+                        });
+                    });
                 })
                 .catch((err) => {
                     console.log("Lỗi đăng nhập:", err.code);
@@ -795,6 +811,7 @@
                     }
                 });
         }
+
         const db = firebase.database();
 
         let allMessages = {};
@@ -1091,7 +1108,7 @@
         });
 
     </script>
-    <script>
+    <!-- <script>
         const messaging = firebase.messaging();
 
         navigator.serviceWorker.register('firebase-messaging-sw.js')
@@ -1129,7 +1146,7 @@
                     });
             });
 
-    </script>
+    </script> -->
 
     <!-- popup hiển thị ảnh -->
     <div id="imagePopupOverlay" style="display: none;" onclick="closeImagePopup()">
