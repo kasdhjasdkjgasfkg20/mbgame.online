@@ -3152,45 +3152,6 @@
             }
         };
     </script>
-    <button id="scrollTopBtn" title="Về đầu trang">
-        <i class="fa-solid fa-arrow-up"></i>
-    </button>
-
-    <script>
-        const scrollBtn = document.getElementById('scrollTopBtn');
-        const threshold = 50;
-
-        window.addEventListener('scroll', () => {
-            const docHeight = document.documentElement.scrollHeight;
-            const scrolled = window.scrollY + window.innerHeight;
-            const atBottom = scrolled >= docHeight - threshold;
-            scrollBtn.style.display = atBottom ? 'block' : 'none';
-        });
-
-
-        scrollBtn.addEventListener('click', () => {
-            const duration = 800;
-            const start = window.scrollY;
-            const startTime = performance.now();
-
-            function animate(now) {
-                const elapsed = now - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                // easeInOutQuad
-                const ease = progress < 0.5
-                    ? 2 * progress * progress
-                    : -1 + (4 - 2 * progress) * progress;
-
-                window.scrollTo(0, start * (1 - ease));
-
-                if (progress < 1) {
-                    requestAnimationFrame(animate);
-                }
-            }
-
-            requestAnimationFrame(animate);
-        });
-    </script>
 </body>
 
 </html>
