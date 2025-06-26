@@ -15,14 +15,15 @@
         property="og:description" />
     <meta content="default" name="theme-color" />
     <meta content="https://i.imgur.com/19hZ5WO.png" property="og:image" />
-    <title>
-        MBgame.online - Hệ Thống Kiếm Tiền Online Thu Nhập Tự Động
-    </title>
+    <title>MBgame.online - Hệ Thống Kiếm Tiền Online Thu Nhập Tự Động</title>
     <link href="./MBbank/simple-notify.min.css" rel="stylesheet" />
     <link href="./MBbank/app.css" rel="stylesheet" />
+    <link rel="stylesheet" href="chat.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
-    <script src="./MBbank/sweetalert2@11">
-    </script>
+    <script src="./MBbank/sweetalert2@11"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --swal2-outline: 0 0 0 3px rgba(100, 150, 200, 0.5);
@@ -1713,7 +1714,7 @@
         }
 
         .footer {
-            margin-top: 50px;
+            margin-top: 200px;
         }
     </style>
 </head>
@@ -1768,7 +1769,7 @@
                                     <div class="py-3"
                                         data-text="Hệ thống game MB Bank Kiếm Tiền Tự động | Uy tín, giao dịch tự động 24/7"
                                         id="mainTitle">
-                                        <h1 class="font-weight-bold text-primary h2 cursor">
+                                        <h1 class="font-weight-bold text-primary h2 cursor rainbow-text">
                                             HỆ THỐNG KIẾM TIỀN ONLINE THU NHẬP TỰ ĐỘNG
                                         </h1>
                                         <p class="text-danger noti-warn">
@@ -2184,6 +2185,893 @@
                 rel="stylesheet" />
         </template>
     </div>
+    <div class="livechat-wrapper">
+        <div class="chat-toggle" onclick="toggleChat()">
+            <img src="https://cdn-icons-png.flaticon.com/128/10503/10503384.png" alt="support icon" width="28" />
+        </div>
+        <div class="chat-box" id="chatBox">
+            <div class="chat-main">
+                <div class="chat-header">
+                    <div class="tooltip-wrapper">
+                        <div style="position: relative;">
+                            <div class="tooltip-icon" id="chatMenuToggle" style="cursor: pointer; font-size: 22px;">⋯
+                            </div>
+                            <div class="tooltip-text tooltip-text-left">Tùy chọn</div>
+                        </div>
+                        <div id="chatMenu">
+                            <div class="menu-item">
+                                <img id="soundIcon" src="https://cdn-icons-png.flaticon.com/128/3721/3721868.png"
+                                    class="menu-item-icon" />
+                                <label for="soundToggle"
+                                    style="flex: 1; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+                                    <span>Âm thanh</span>
+                                    <span class="toggle-switch">
+                                        <input type="checkbox" id="soundToggle" checked onchange="toggleSoundIcon()">
+                                        <span class="slider"></span>
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="menu-item">
+                                <img id="themeIcon" src="https://cdn-icons-png.flaticon.com/128/4623/4623236.png"
+                                    class="menu-item-icon" />
+
+                                <label for="themeToggle"
+                                    style="flex: 1; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+                                    <span>Chế độ tối</span>
+                                    <span class="toggle-switch">
+                                        <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
+                                        <span class="slider"></span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-title chat-profile-box" onclick="toggleRole()">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="avatar-wrapper">
+                                <img src="https://cdn-icons-png.flaticon.com/128/10503/10503384.png" alt="Logo"
+                                    class="avatar-logo">
+                                <span class="status-dot"></span>
+                            </div>
+                            <div class="chat-name-role toggle-name-role">
+                                <div class="chat-name">Admin Hỗ Trợ</div>
+                                <div style="margin-top: 2px;" class="chat-role chat-role-toggle rainbow-text"
+                                    id="chatRole">Game
+                                    Support
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tooltip-wrapper">
+                        <div class="tooltip-icon" id="shrink" onclick="minimizeChat()"
+                            style="cursor: pointer; font-size: 22px;">–</div>
+                        <div class="tooltip-text tooltip-text-right">Thu nhỏ cửa sổ</div>
+                    </div>
+                </div>
+
+                <div id="scroll-wrapper"
+                    style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+                    <div id="innerBox" class="inner-box" style="position: relative;">
+                        <div class="chat-body" id="chatBody">
+
+                            <div id="beforeChat">
+
+                                <div class="title"
+                                    style="font-size: 14px; margin-bottom: 15px; padding-left: 10px; margin-top: -10px;">
+                                    <p><strong>⚠️ Lưu ý:</strong></p>
+                                    <ul style="padding-left: 18px;">
+                                        <li>Đặt <strong>L</strong> kết quả gồm <strong>1 - 3 - 5 - 7</strong></li>
+                                        <li>Đặt <strong>C</strong> kết quả gồm <strong>2 - 4 - 6 - 8</strong></li>
+                                    </ul>
+                                    <p>Nếu kết quả ra số <strong>0</strong> hoặc <strong>9</strong> nghĩa là bạn <strong
+                                            style="color: red;">THUA</strong>, vui lòng chơi lại! ❌</p>
+                                    <p>👉🏻 Bạn thắng mà vẫn chưa nhận được tiền thưởng? Vui lòng chụp bill Admin kiểm
+                                        tra
+                                        cho
+                                        nhé!</p>
+                                </div>
+
+                                <div class="account-input" id="accountInputSection">
+                                    <label for="account">Số Tài Khoản:</label>
+                                    <input type="text" id="account" placeholder="" autocomplete="off">
+                                    <button onclick="startChat()">Bắt đầu chat</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="logout-note" id="logoutNote"
+                        style="text-align: center; font-size: 13px; color: #666; margin: 10px 20px;"></div>
+
+                    <div id="restartChatBtn" style="display: none; padding: 0 50px 50px;">
+                        <button onclick="restartChat()" style="
+            width: 100%;
+            background-color: #000;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;">
+                            Bắt đầu chat lại
+                        </button>
+                    </div>
+                    <div id="chatContent" style="display:none;">
+                        <div id="accountDisplay" style="display: none;">
+                            <div class="account-label">Số Tài Khoản:</div>
+                            <div class="account-value" id="accountNumberText"></div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="chat-footer" id="chatFooter" style="display: none;">
+                    <div class="message-input-container">
+                        <input type="text" id="messageInput" placeholder="Viết tin nhắn..." autocomplete="off">
+                        <div class="icon-btn emoji-wrapper" id="emojiBtn" title="Biểu tượng cảm xúc">
+                            <img src="https://cdn-icons-png.flaticon.com/128/4989/4989500.png"
+                                title="Biểu tượng cảm xúc" alt="emoji" style="width: 20px; height: 20px;">
+                            <div class="emoji-popup" id="emojiPopup">
+                                <!-- Hàng 1 -->
+                                <span class="emoji">😀</span>
+                                <span class="emoji">😂</span>
+                                <span class="emoji">😍</span>
+                                <span class="emoji">😎</span>
+                                <span class="emoji">😊</span>
+
+                                <!-- Hàng 2 -->
+                                <span class="emoji">👍</span>
+                                <span class="emoji">❤️</span>
+                                <span class="emoji">🤔</span>
+                                <span class="emoji">👏</span>
+                                <span class="emoji">🙏</span>
+
+                                <!-- Hàng 3 -->
+                                <span class="emoji">😢</span>
+                                <span class="emoji">😡</span>
+                                <span class="emoji">😮</span>
+                                <span class="emoji">🥰</span>
+                                <span class="emoji">🎉</span>
+                            </div>
+                        </div>
+                        <div class="icon-btn attachment-wrapper" id="attachBtn" title="">
+                            <img src="https://cdn-icons-png.flaticon.com/128/9293/9293648.png" title="Đính kèm"
+                                alt="Đính kèm" style="width: 20px; height: 20px;">
+
+                        </div>
+                        <div class="attachment-popup" id="attachmentPopup">
+                            <div class="attachment-item" onclick="document.getElementById('fileInput').click()"><img
+                                    class="img-item" src="https://cdn-icons-png.flaticon.com/128/5447/5447285.png"
+                                    title="" alt="Gửi" style="width: 20px; height: 20px;">Gửi tập
+                                tin</div>
+                        </div>
+                        <button class="send-btn" onclick="sendMessage()">
+                            <img src="https://cdn-icons-png.flaticon.com/128/11600/11600263.png" title="Gửi" alt="Gửi"
+                                style="width: 20px; height: 20px;">
+                        </button>
+
+                        <input type="file" id="fileInput" style="display:none" onchange="uploadImage()" />
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="chat-bottom">
+                <div class="logout-note" id="logoutNote"></div>
+                <div id="restartChatBtn" style="display: none; padding: 0 20px 20px;">
+                    <button onclick="restartChat()"
+                        style="width: 100%; background-color: #000; color: white; padding: 10px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer;">
+                        Bắt đầu chat lại
+                    </button>
+                </div>
+                <div class="powered-by">
+                    <span style="color: #888;">Powered by</span>
+                    <img src="https://cdn-icons-png.flaticon.com/128/10503/10503384.png" alt="LiveChat logo"
+                        class="powered-logo" />
+                    <strong>LiveChat</strong>
+                </div>
+            </div>
+            <audio id="notifSound" src="./image/arpeggio-467.mp3" preload="auto"></audio>
+        </div>
+        <div id="imagePopupOverlay" style="
+    display:none;
+    position:fixed;
+    top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.8);
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+">
+            <img id="popupImage" style="
+        max-width:90%;
+        max-height:90%;
+        box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        border-radius: 8px;
+        background: white;
+    " />
+        </div>
+    </div>
+    <script>
+        let savedRange = null;
+        function toggleTheme() {
+            const isDark = document.getElementById("themeToggle").checked;
+            const chatBox = document.getElementById("chatBox");
+            const themeIcon = document.getElementById("themeIcon");
+
+
+            chatBox.classList.toggle("dark-theme", isDark);
+
+            // Đổi icon
+            themeIcon.src = isDark
+                ? "https://cdn-icons-png.flaticon.com/128/4489/4489231.png" // icon moon
+                : "https://cdn-icons-png.flaticon.com/128/4623/4623236.png"; // icon sun
+        }
+
+
+
+        let originalTitle = document.title;
+        let titleBlinkInterval = null;
+        let isWindowFocused = true;
+
+        window.onfocus = () => {
+            isWindowFocused = true;
+            clearInterval(titleBlinkInterval);
+            titleBlinkInterval = null;
+            document.title = originalTitle;
+        };
+
+        window.onblur = () => {
+            isWindowFocused = false;
+        };
+
+        function toggleRole() {
+            const role = document.getElementById("chatRole");
+            const name = document.querySelector(".chat-name");
+
+            if (!role || !name) return;
+
+            role.classList.toggle("hidden");
+            name.classList.toggle("centered");
+        }
+
+
+        document.addEventListener("click", function (event) {
+            const menu = document.getElementById("chatMenu");
+            const toggle = document.getElementById("chatMenuToggle");
+            const wrapper = toggle.closest(".tooltip-wrapper");
+
+            if (menu.style.display === "block" && !wrapper.contains(event.target)) {
+                menu.style.display = "none";
+                wrapper.classList.remove("menu-open");
+            }
+        });
+
+        function toggleSoundIcon() {
+            const soundIcon = document.getElementById("soundIcon");
+            const toggle = document.getElementById("soundToggle");
+            soundIcon.src = toggle.checked ? "https://cdn-icons-png.flaticon.com/128/3721/3721868.png" : "https://cdn-icons-png.flaticon.com/128/3721/3721860.png";
+        }
+        function restartChat() {
+            localStorage.removeItem("accountStarted");
+            localStorage.removeItem("currentAccount");
+            localStorage.removeItem("chatStartTime");
+
+            document.getElementById("innerBox").style.display = "block";
+            document.getElementById("beforeChat").style.display = "block";
+            document.getElementById("accountInputSection").style.display = "block";
+            document.getElementById("accountDisplay").style.display = "block";
+
+            document.getElementById("chatContent").style.display = "none";
+            document.getElementById("chatFooter").style.display = "none";
+
+            document.getElementById("logoutNote").innerText = "";
+            document.getElementById("restartChatBtn").style.display = "none";
+        }
+
+
+        const lastSeenReplyId = {};
+        const firstLoadDone = {};
+        function listenMessages() {
+            db.ref("messages").on("value", snapshot => {
+                const data = snapshot.val();
+                [...chatContent.children].forEach(child => {
+                    if (child.id !== "accountDisplay") {
+                        chatContent.removeChild(child);
+                    }
+                });
+
+                document.getElementById("accountNumberText").textContent = currentAccount;
+                document.getElementById("accountDisplay").style.display = "block";
+
+                if (!data || !currentAccount) return;
+
+                const TIME_THRESHOLD = 5 * 60 * 1000;
+
+                let latestReply = null;
+                let latestReplyId = null;
+
+                const sortedMessages = Object.values(data)
+                    .filter(msg => msg.account === currentAccount)
+                    .sort((a, b) => (a.time || 0) - (b.time || 0));
+
+                sortedMessages.forEach((msg, index) => {
+
+                    if (msg.message && msg.message.trim() !== "") {
+                        const userWrap = document.createElement("div");
+                        userWrap.className = "message-wrapper user-message-wrapper";
+
+                        const bubbleGroup = document.createElement("div");
+                        bubbleGroup.style.display = "flex";
+                        bubbleGroup.style.flexDirection = "column";
+                        bubbleGroup.style.alignItems = "flex-end";
+
+
+                        const timeLabel = document.createElement("div");
+                        timeLabel.className = "message-hover-time";
+                        const t = new Date(msg.time || Date.now());
+                        timeLabel.innerText = ` ${t.getHours().toString().padStart(2, '0')}:${t.getMinutes().toString().padStart(2, '0')}`;
+
+                        const userBubble = document.createElement("div");
+                        if (msg.message.trim().startsWith('<img')) {
+                            userBubble.className = "message user-image";
+                            userBubble.innerHTML = msg.message;
+                        } else {
+                            userBubble.className = "message user-text";
+                            userBubble.textContent = msg.message;
+                        }
+
+
+                        const nextMsg = sortedMessages[index + 1];
+                        const currentTime = msg.time || Date.now();
+                        let showStatus = false;
+
+                        if (!nextMsg) {
+                            showStatus = true;
+                        } else {
+                            const nextTime = nextMsg.time || Date.now();
+                            if (nextTime - currentTime > TIME_THRESHOLD) {
+                                showStatus = true;
+                            }
+                        }
+
+                        bubbleGroup.appendChild(timeLabel);
+                        bubbleGroup.appendChild(userBubble);
+
+                        if (showStatus) {
+                            const status = document.createElement("div");
+                            status.className = "message-status";
+                            status.innerText = msg.read ? "Đã xem" : "Đã gửi";
+                            status.style.fontSize = "11px";
+                            status.style.color = "#888";
+                            status.style.marginTop = "4px";
+                            status.style.textAlign = "right";
+                            bubbleGroup.appendChild(status);
+                        }
+
+                        userWrap.appendChild(bubbleGroup);
+                        chatContent.appendChild(userWrap);
+                    }
+
+                    if (msg.reply) {
+                        const adminWrap = document.createElement("div");
+                        adminWrap.className = "admin-message-wrapper";
+
+                        const avatar = document.createElement("div");
+                        avatar.className = "avatar-wrapper";
+                        avatar.innerHTML = `<img src="https://cdn-icons-png.flaticon.com/128/10503/10503384.png" alt="Admin" class="avatar-logo">`;
+
+                        let bubble;
+                        if (msg.reply.trim().startsWith('<img')) {
+                            bubble = document.createElement("div");
+                            bubble.className = "message user-image";
+                            bubble.innerHTML = msg.reply;
+                        } else if (/^\d{6,}$/.test(msg.reply.trim())) {
+                            bubble = document.createElement("div");
+                            bubble.className = "account-info-box";
+                            bubble.innerHTML = `
+            <div class="account-label">Số Tài Khoản:</div>
+            <div class="account-value">${msg.reply}</div>
+        `;
+                        } else {
+                            bubble = document.createElement("div");
+                            bubble.className = "admin-message-bubble";
+                            bubble.textContent = msg.reply;
+
+
+                            bubble.style.whiteSpace = "pre-wrap";
+                            bubble.style.wordBreak = "break-word";
+                            bubble.style.overflowWrap = "break-word";
+                            bubble.style.maxWidth = "75%";
+                            bubble.style.display = "inline-block";
+                        }
+
+
+                        const timeLabel = document.createElement("div");
+                        timeLabel.className = "message-hover-time";
+                        const t = new Date(msg.time || Date.now());
+                        timeLabel.innerText = `${t.getHours().toString().padStart(2, '0')}:${t.getMinutes().toString().padStart(2, '0')}`;
+
+
+                        const bubbleGroup = document.createElement("div");
+                        bubbleGroup.style.display = "flex";
+                        bubbleGroup.style.flexDirection = "column";
+                        bubbleGroup.style.alignItems = "flex-start";
+                        bubbleGroup.style.flex = "1";
+
+                        bubbleGroup.appendChild(timeLabel);
+                        bubbleGroup.appendChild(bubble);
+
+                        adminWrap.appendChild(avatar);
+                        adminWrap.appendChild(bubbleGroup);
+                        chatContent.appendChild(adminWrap);
+
+                        latestReply = msg.reply;
+                        latestReplyId = msg.time || msg.message + msg.reply;
+                    }
+                });
+
+                setTimeout(() => {
+                    document.querySelectorAll(".message img").forEach(img => {
+                        img.style.cursor = "pointer";
+                        img.onclick = () => showImagePopup(img.src);
+                    });
+                }, 0);
+
+
+                document.getElementById("scroll-wrapper").scrollTop =
+                    document.getElementById("scroll-wrapper").scrollHeight;
+
+
+                if (!firstLoadDone[currentAccount]) {
+                    lastSeenReplyId[currentAccount] = latestReplyId;
+                    firstLoadDone[currentAccount] = true;
+                    return;
+                }
+
+                if (
+                    latestReply &&
+                    latestReplyId &&
+                    latestReplyId !== lastSeenReplyId[currentAccount]
+                ) {
+                    if (document.getElementById("soundToggle").checked) {
+                        const audio = document.getElementById("notifSound");
+                        audio.play().catch(err => console.error("Không phát âm:", err));
+                    }
+
+                    if (!isWindowFocused && !titleBlinkInterval) {
+                        let blink = false;
+                        titleBlinkInterval = setInterval(() => {
+                            document.title = blink
+                                ? "Bạn có tin nhắn mới!"
+                                : originalTitle;
+                            blink = !blink;
+                        }, 1000);
+                    }
+
+                    lastSeenReplyId[currentAccount] = latestReplyId;
+                }
+            });
+        }
+        //
+        document.getElementById("chatMenuToggle").onclick = function () {
+            const menu = document.getElementById("chatMenu");
+            const wrapper = this.closest('.tooltip-wrapper');
+
+            if (menu.style.display === "none") {
+                menu.style.display = "block";
+                wrapper.classList.add("menu-open");
+            } else {
+                menu.style.display = "none";
+                wrapper.classList.remove("menu-open");
+            }
+        };
+
+
+        function minimizeChat() {
+
+            wrapper.classList.remove('open');
+            wrapper.classList.add('pop-out');
+
+
+            setTimeout(() => {
+                chatBox.style.display = 'none';
+                toggleBtn.style.display = 'block';
+                wrapper.classList.remove('pop-out');
+            }, 300);
+        }
+
+
+
+        const firebaseConfig = {
+            databaseURL: "https://chatbot-support-e1774-default-rtdb.asia-southeast1.firebasedatabase.app",
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        const chatBox = document.getElementById("chatBox");
+        const beforeChat = document.getElementById("beforeChat");
+        const chatContent = document.getElementById("chatContent");
+        const chatFooter = document.getElementById("chatFooter");
+        const messageInput = document.getElementById("messageInput");
+        const accountInput = document.getElementById("account");
+        const logoutNote = document.getElementById("logoutNote");
+        const wrapper = document.querySelector('.livechat-wrapper');
+        const toggleBtn = document.querySelector('.chat-toggle');
+
+        window.currentAccount = null;
+
+        let logoutTimer;
+
+        function toggleChat() {
+            wrapper.classList.remove('pop-out');
+            wrapper.classList.add('open');
+            chatBox.style.display = 'flex';
+            toggleBtn.style.display = 'none';
+
+
+            if (window.recoverChat) {
+                beforeChat.style.display = "none";
+                chatContent.style.display = "block";
+                chatFooter.style.display = "block";
+                document.getElementById("innerBox").style.display = "none";
+                document.getElementById("accountNumberText").textContent = currentAccount;
+                document.getElementById("accountDisplay").style.display = "block";
+                document.getElementById("accountInputSection").style.display = "none";
+
+                listenMessages();
+                resetLogoutTimer();
+                document.getElementById("messageInput").focus();
+                window.recoverChat = false;
+                return;
+            }
+
+
+            if (logoutNote.innerText.trim()) {
+                beforeChat.style.display = "block";
+                chatContent.style.display = "none";
+                chatFooter.style.display = "none";
+                document.getElementById("innerBox").style.display = "block";
+                document.getElementById("restartChatBtn").style.display = "block";
+                return;
+            }
+
+
+            beforeChat.style.display = "block";
+            chatContent.style.display = "none";
+            chatFooter.style.display = "none";
+            document.getElementById("innerBox").style.display = "block";
+            document.getElementById("restartChatBtn").style.display = "none";
+        }
+
+
+
+        function startChat() {
+            currentAccount = accountInput.value.trim();
+            if (!currentAccount) return alert("Vui lòng nhập số tài khoản");
+
+            beforeChat.style.display = "none";
+            chatContent.style.display = "block";
+            chatFooter.style.display = "block";
+            listenMessages();
+            resetLogoutTimer();
+
+            document.getElementById("accountInputSection").style.display = "none";
+            document.getElementById("chatContent").style.display = "block";
+
+
+            document.getElementById("innerBox").style.display = "none";
+
+            document.getElementById("accountNumberText").textContent = currentAccount;
+            localStorage.setItem("accountStarted", "true");
+            localStorage.setItem("currentAccount", currentAccount);
+            localStorage.setItem("chatStartTime", Date.now());
+
+            document.getElementById("accountDisplay").style.display = "block";
+
+            listenMessages();
+
+            document.getElementById("messageInput").focus();
+
+            const newRef = db.ref("messages").push();
+            newRef.set({
+                account: currentAccount,
+                message: "",
+                reply: "Bạn thắng mà chưa nhận được tiền thưởng ạ? Chụp bill có mã giao dịch ad check cho nhé!",
+                time: Date.now()
+            });
+        }
+
+        function resetLogoutTimer() {
+            clearTimeout(logoutTimer);
+            logoutTimer = setTimeout(() => {
+                currentAccount = null;
+
+                [...chatContent.children].forEach(child => {
+                    if (child.id !== "accountDisplay") {
+                        chatContent.removeChild(child);
+                    }
+                });
+
+                chatFooter.style.display = "none";
+                document.getElementById("accountDisplay").style.display = "none";
+                document.getElementById("chatContent").style.display = "none";
+
+
+                document.getElementById("innerBox").style.display = "block";
+                document.getElementById("beforeChat").style.display = "block";
+
+
+                const inputSection = document.getElementById("accountInputSection");
+                if (inputSection) inputSection.style.display = "none";
+
+                document.getElementById("logoutNote").innerText =
+                    "Phiên chat đã bị đóng lại do người dùng không hoạt động trong khoảng thời gian dài.";
+                document.getElementById("restartChatBtn").style.display = "block";
+            }, 5 * 60 * 1000);
+        }
+
+        function uploadImage() {
+            const file = document.getElementById("fileInput").files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const newRef = db.ref("messages").push();
+                newRef.set({
+                    account: currentAccount,
+                    message: `<img src="${e.target.result}" class="raw-image" />`,
+                    reply: "",
+                    time: Date.now()
+                });
+            };
+            reader.readAsDataURL(file);
+            document.getElementById("accountNumberText").textContent = currentAccount;
+            document.getElementById("accountDisplay").style.display = "block";
+
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const messageInput = document.getElementById("messageInput");
+
+
+            const mirror = document.createElement("span");
+            mirror.style.position = "absolute";
+            mirror.style.visibility = "hidden";
+            mirror.style.whiteSpace = "pre-wrap";
+            mirror.style.wordWrap = "break-word";
+            mirror.style.lineHeight = "18px";
+            mirror.style.padding = "10px";
+            mirror.style.width = messageInput.offsetWidth + "px";
+            mirror.style.fontSize = "14px";
+            mirror.style.fontFamily = window.getComputedStyle(messageInput).fontFamily;
+
+            document.body.appendChild(mirror);
+
+            const defaultHeight = messageInput.offsetHeight;
+
+            function resizeInput() {
+                mirror.textContent = messageInput.value || " ";
+                mirror.style.width = messageInput.offsetWidth + "px";
+
+                const newHeight = Math.min(mirror.scrollHeight, 120);
+                messageInput.style.height = newHeight + "px";
+                messageInput.style.overflowY = mirror.scrollHeight > 120 ? "auto" : "hidden";
+            }
+
+
+            messageInput.addEventListener("input", resizeInput);
+
+
+            const originalSendMessage = window.sendMessage;
+            window.sendMessage = function () {
+                originalSendMessage();
+                messageInput.style.height = defaultHeight + "px";
+                messageInput.scrollTop = 0;
+            };
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            const inputReal = document.getElementById("messageInput");
+            const editor = document.createElement("div");
+            editor.className = "message-editor";
+            editor.setAttribute("contenteditable", "true");
+            editor.setAttribute("data-placeholder", "Viết tin nhắn...");
+            inputReal.style.display = "none";
+
+            const emojiBtn = document.getElementById("emojiBtn");
+            const attachBtn = document.getElementById("attachBtn");
+            const emojiPopup = document.getElementById("emojiPopup");
+            const attachPopup = document.getElementById("attachmentPopup");
+            const sendButton = document.querySelector(".send-btn");
+
+
+            emojiBtn.parentNode.insertBefore(editor, emojiBtn);
+
+
+            function syncAndResize() {
+                inputReal.value = editor.innerText.trim();
+                editor.style.height = "auto";
+                const newHeight = Math.min(editor.scrollHeight, 120);
+                editor.style.height = newHeight + "px";
+                document.getElementById("scroll-wrapper").style.paddingBottom = (newHeight + 40) + "px";
+
+                const hasContent = editor.innerText.trim().length > 0;
+                sendButton.disabled = !hasContent;
+                sendButton.style.opacity = hasContent ? "1" : "0.5";
+            }
+            function saveCursorPosition() {
+                const selection = window.getSelection();
+                if (selection.rangeCount > 0) {
+                    const range = selection.getRangeAt(0);
+                    if (editor.contains(range.startContainer)) {
+                        savedRange = range;
+                    }
+                }
+            }
+
+            editor.addEventListener("keyup", saveCursorPosition);
+            editor.addEventListener("mouseup", saveCursorPosition);
+            editor.addEventListener("focus", saveCursorPosition);
+
+
+            editor.addEventListener("input", syncAndResize);
+
+            editor.addEventListener("keydown", function (e) {
+                if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    if (editor.innerText.trim()) sendMessage();
+                }
+            });
+
+
+            const originalSendMessage = window.sendMessage;
+            window.sendMessage = function () {
+                const text = editor.innerText.trim();
+                if (!text || !window.currentAccount) return;
+
+                const newRef = db.ref("messages").push();
+                newRef.set({
+                    account: window.currentAccount,
+                    message: text,
+                    reply: "",
+                    time: Date.now()
+                });
+
+
+                editor.innerText = "";
+                editor.setAttribute("data-placeholder", "Viết tin nhắn...");
+                syncAndResize();
+                resetLogoutTimer();
+            };
+
+
+            document.querySelectorAll(".emoji").forEach(emoji => {
+                emoji.addEventListener("click", () => {
+                    if (savedRange) {
+                        const selection = window.getSelection();
+                        selection.removeAllRanges();
+                        selection.addRange(savedRange);
+
+
+                        const emojiNode = document.createTextNode(emoji.textContent);
+                        savedRange.deleteContents();
+                        savedRange.insertNode(emojiNode);
+
+
+                        savedRange.setStartAfter(emojiNode);
+                        savedRange.collapse(true);
+
+
+                        selection.removeAllRanges();
+                        selection.addRange(savedRange);
+
+                        saveCursorPosition();
+                    }
+
+                    emojiPopup.style.display = "none";
+                    editor.focus();
+                    syncAndResize();
+                });
+            });
+
+
+
+            emojiBtn.addEventListener("click", function (e) {
+                e.stopPropagation();
+                emojiPopup.style.display = emojiPopup.style.display === "flex" ? "none" : "flex";
+                attachPopup.style.display = "none";
+            });
+
+
+            attachBtn.addEventListener("click", function (e) {
+                e.stopPropagation();
+                attachPopup.style.display = attachPopup.style.display === "flex" ? "none" : "flex";
+                emojiPopup.style.display = "none";
+            });
+
+
+            document.addEventListener("click", function () {
+                emojiPopup.style.display = "none";
+                attachPopup.style.display = "none";
+            });
+
+
+            sendButton.disabled = true;
+            sendButton.style.opacity = "0.5";
+            syncAndResize();
+        });
+
+        function showImagePopup(src) {
+            const overlay = document.getElementById("imagePopupOverlay");
+            const img = document.getElementById("popupImage");
+
+            img.src = src;
+            overlay.style.display = "flex";
+
+            enableImageZoom();
+        }
+
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const overlay = document.getElementById("imagePopupOverlay");
+            if (overlay) {
+                overlay.addEventListener("click", () => {
+                    overlay.style.display = "none";
+                });
+            }
+
+            enableImageZoom();
+        });
+
+        let zoomLevel = 1;
+
+        function enableImageZoom() {
+            const img = document.getElementById("popupImage");
+
+
+            zoomLevel = 1;
+            img.style.transform = "scale(1)";
+
+
+            img.onwheel = (e) => {
+                e.preventDefault();
+                const zoomSpeed = 0.1;
+
+                if (e.deltaY < 0) {
+                    zoomLevel = Math.min(zoomLevel + zoomSpeed, 5);
+                } else {
+                    zoomLevel -= zoomSpeed;
+
+                    if (zoomLevel <= 1) {
+                        zoomLevel = 1;
+                    }
+                }
+
+                img.style.transform = `scale(${zoomLevel})`;
+            };
+        }
+        document.addEventListener("DOMContentLoaded", function () {
+            const chatBox = document.getElementById("chatBox");
+            const toggleBtn = document.querySelector('.chat-toggle');
+
+            const chatStarted = localStorage.getItem("accountStarted") === "true";
+            const savedAccount = localStorage.getItem("currentAccount");
+            const chatStartTime = parseInt(localStorage.getItem("chatStartTime") || "0", 10);
+            const now = Date.now();
+
+            chatBox.style.display = "none";
+            toggleBtn.style.display = "block";
+
+            if (chatStarted && savedAccount && (now - chatStartTime <= 10 * 1000)) {
+                window.recoverChat = true;
+                window.currentAccount = savedAccount;
+            } else {
+                localStorage.removeItem("accountStarted");
+                localStorage.removeItem("currentAccount");
+                localStorage.removeItem("chatStartTime");
+            }
+        });
+
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         window.addEventListener("DOMContentLoaded", function () {
@@ -2241,35 +3129,7 @@
             window.location.href = "home.html";
         });
     </script>
-    <!-- <script>
-        window.__lc = window.__lc || {};
-        window.__lc.license = 19178060;
-        window.__lc.integration_name = "manual_channels";
-        window.__lc.product_name = "livechat";
 
-        (function (n, c, t) {
-            function e(n) { return i._h ? i._h.apply(null, n) : i._q.push(n) }
-            var i = {
-                _q: [],
-                _h: null,
-                _v: "2.0",
-                on: function () { e(["on", t.call(arguments)]) },
-                once: function () { e(["once", t.call(arguments)]) },
-                off: function () { e(["off", t.call(arguments)]) },
-                get: function () { if (i._h) return e(["get", t.call(arguments)]); throw new Error("[LiveChatWidget] You can't use getters before load.") },
-                call: function () { e(["call", t.call(arguments)]) },
-                init: function () {
-                    var n = c.createElement("script");
-                    n.async = !0;
-                    n.type = "text/javascript";
-                    n.src = "https://cdn.livechatinc.com/tracking.js";
-                    c.head.appendChild(n);
-                }
-            };
-            n.__lc.asyncInit || i.init();
-            n.LiveChatWidget = n.LiveChatWidget || i;
-        })(window, document, [].slice);
-    </script> -->
     <script>
         document.addEventListener("contextmenu", e => e.preventDefault());
         document.addEventListener("keydown", e => {
@@ -2282,24 +3142,55 @@
             }
         });
 
-        // setInterval(() => {
-        // const devtoolsOpened =
-        // window.outerHeight - window.innerHeight > 160 ||
-        //  window.outerWidth - window.innerWidth > 160;
-        // if (devtoolsOpened) {
-        // document.body.innerHTML = "<h1 style='text-align:center; color:red;'>Đã phát hiện DevTools. Truy cập bị chặn. Vui lòng tắt và tải lại!</h1>";
-        // }
-        // }, 1000);
+
     </script>
     <script>
-        document.addEventListener("contextmenu", e => e.preventDefault()); // Chặn chuột phải
+        document.addEventListener("contextmenu", e => e.preventDefault());
         document.onkeydown = function (e) {
             if (e.key === "F12" || (e.ctrlKey && e.shiftKey && e.key === "I")) {
                 return false;
             }
         };
     </script>
+    <button id="scrollTopBtn" title="Về đầu trang">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
 
+    <script>
+        const scrollBtn = document.getElementById('scrollTopBtn');
+        const threshold = 50;
+
+        window.addEventListener('scroll', () => {
+            const docHeight = document.documentElement.scrollHeight;
+            const scrolled = window.scrollY + window.innerHeight;
+            const atBottom = scrolled >= docHeight - threshold;
+            scrollBtn.style.display = atBottom ? 'block' : 'none';
+        });
+
+
+        scrollBtn.addEventListener('click', () => {
+            const duration = 800;
+            const start = window.scrollY;
+            const startTime = performance.now();
+
+            function animate(now) {
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                // easeInOutQuad
+                const ease = progress < 0.5
+                    ? 2 * progress * progress
+                    : -1 + (4 - 2 * progress) * progress;
+
+                window.scrollTo(0, start * (1 - ease));
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            }
+
+            requestAnimationFrame(animate);
+        });
+    </script>
 </body>
 
 </html>
