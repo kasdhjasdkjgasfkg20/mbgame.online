@@ -759,10 +759,10 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script> <!-- Auth sau App -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
+    <script src="firebase.js"></script>
     <script>
 
-        // ✅ Khởi tạo
-        firebase.initializeApp(firebaseConfig);
+
         const auth = firebase.auth(); // 👈 phải khai báo sau initializeApp
 
         function login() {
@@ -1097,7 +1097,7 @@
         navigator.serviceWorker.register('firebase-messaging-sw.js')
             .then((registration) => {
                 messaging.getToken({
-                    vapidKey: 'cxVpbG-QqYh50vihAU7sQXyJl8GNals-b5kzg_ZCAhI',
+                    vapidKey: 'BKjj1tkQXmwAIQzCN2KSL6tIhnhGBeZqS_Cr2ebv2P-3u12oFFjm8A6CHvoRnSOy9Mo3pOkM6pMDkaHkCNF9H48',
                     serviceWorkerRegistration: registration
                 })
                     .then((token) => {
@@ -1168,8 +1168,6 @@
             Hệ thống kiếm tiền online tự động
         </p>
     </div>
-    <script src="firebase.js"></script>
-
 </body>
 
 </html>
