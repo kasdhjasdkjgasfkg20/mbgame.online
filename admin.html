@@ -1,1 +1,1186 @@
+<!DOCTYPE html>
+<html lang="vi">
 
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Hỗ Trợ</title>
+    <style>
+        :root {
+            --primary: #141ed2;
+            --light-bg: #f4f4f4;
+            --dark-bg: #1e1e1e;
+            --dark-text: #e4e6eb;
+            --unread-color: red;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: var(--light-bg);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark {
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 3fr 7fr;
+            height: 100vh;
+            overflow: hidden;
+            /* chặn cuộn toàn trang */
+        }
+
+        .sidebar {
+            padding: 20px;
+            background-color: white;
+            border-right: 1px solid #ddd;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+
+        body.dark .sidebar {
+            background-color: #2e2e2e;
+        }
+
+        .sidebar input {
+            width: 96%;
+            padding: 8px;
+            margin-bottom: 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        .account-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            margin-bottom: 6px;
+            border-radius: 10px;
+            cursor: pointer;
+            background-color: #f9f9f9;
+            transition: background-color 0.2s;
+        }
+
+        .account-item:hover {
+            background-color: #ececec;
+        }
+
+        .account-item.active {
+            background-color: #dbe4ff;
+        }
+
+        .account-avatar {
+            width: 36px;
+            height: 36px;
+            background-color: #4e6cfb;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .account-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        .account-name {
+            font-weight: bold;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .account-id {
+            font-size: 12px;
+            color: gray;
+        }
+
+        .account-unread {
+            background-color: red;
+            color: white;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        .account-item:hover,
+        .account-item.active {
+            background-color: #e0e7ff;
+        }
+
+        .chat-box {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            /* rất quan trọng */
+        }
+
+
+        body.dark .chat-box {
+            background-color: #2a2a2a;
+        }
+
+        .chat-header {
+            padding: 16px;
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+        }
+
+        .chat-body {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .chat-body img {
+            /* max-width: 60%; */
+            /* giới hạn ngang */
+            height: auto;
+            border-radius: 8px;
+            display: block;
+        }
+
+
+        .chat-footer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            border-top: 1px solid #eee;
+            flex-wrap: wrap;
+        }
+
+        .chat-footer textarea {
+            flex: 1;
+            resize: none;
+            min-height: 38px;
+            max-height: 120px;
+            padding: 12px 14px;
+            /* tăng padding top/bottom để căn giữa */
+            font-size: 14px;
+            line-height: 1.5;
+            border-radius: 18px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            color: #222;
+            transition: all 0.2s ease;
+            overflow-y: auto;
+            outline: none;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            overflow-y: hidden;
+        }
+
+        .chat-footer textarea:focus {
+            border-color: #4e6cfb;
+            background-color: #fff;
+        }
+
+        /* DARK MODE */
+        body.dark .chat-footer textarea {
+            background-color: #2e2e2e;
+            color: #eaeaea;
+            border: 1px solid #555;
+        }
+
+        body.dark .chat-footer textarea:focus {
+            border-color: var(--primary);
+            background-color: #1f1f1f;
+        }
+
+
+        .chat-footer input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        .chat-footer input[type="file"] {
+            display: none;
+        }
+
+        .chat-footer button,
+        .chat-footer label {
+            padding: 10px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .emoji-btn {
+            font-size: 16px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .emoji-popup {
+            position: absolute;
+            bottom: 60px;
+            right: 20px;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 10px;
+            display: none;
+            z-index: 100;
+        }
+
+        .emoji-popup span {
+            cursor: pointer;
+            padding: 4px;
+            font-size: 18px;
+        }
+
+        .message-wrapper {
+            margin-bottom: 12px;
+        }
+
+        .user-message-wrapper {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .admin-message-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-end;
+            width: 100%;
+        }
+
+        .message {
+            padding: 10px 14px;
+            border-radius: 16px;
+            max-width: 60%;
+            font-size: 14px;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-width: 80%;
+        }
+
+        .user-text {
+            background: #141ed2;
+            border: 1px solid #ccc;
+            color: white;
+        }
+
+        .admin-text {
+            background: var(--primary);
+            color: white;
+        }
+
+        .unread-badge {
+            background-color: var(--unread-color);
+            color: white;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        .admin-message-wrapper>div {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        input:focus,
+        button:focus,
+        label:focus,
+        textarea:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        .message-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .admin-message-wrapper {
+            align-items: flex-end;
+        }
+
+        .admin-image-wrapper {
+            background: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: flex-end;
+            /* căn phải giống admin bubble */
+            max-width: 100%;
+        }
+
+        .admin-image-wrapper img {
+            max-width: 60%;
+            height: auto;
+            border-radius: 8px;
+            display: inline-block;
+            object-fit: contain;
+        }
+
+        .user-image,
+        .admin-image {
+            max-width: 40%;
+            height: auto;
+            border-radius: 8px;
+            display: block;
+            margin-top: 6px;
+        }
+
+        #imagePopupOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 9999;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+
+        #imagePopup {
+            max-width: 90vw;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 8px;
+            transition: transform 0.2s ease;
+            transform: scale(1);
+        }
+
+        /* 👤 Sidebar (input tìm kiếm) */
+        body.dark .sidebar input {
+            background-color: #2a2a2a;
+            border: 1px solid #555;
+            color: var(--dark-text);
+        }
+
+        /* 🔽 Chat footer */
+        body.dark .chat-footer {
+            background-color: #2a2a2a;
+            border-top: 1px solid #444;
+        }
+
+        body.dark .chat-footer input[type="text"] {
+            background-color: #2e2e2e;
+            border: 1px solid #555;
+            color: var(--dark-text);
+        }
+
+        body.dark .chat-footer button,
+        body.dark .chat-footer label {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        /* 😊 Emoji popup */
+        body.dark .emoji-popup {
+            background: #2e2e2e;
+            border: 1px solid #555;
+        }
+
+        body.dark .emoji-popup span:hover {
+            background: #444;
+            border-radius: 4px;
+        }
+
+        /* 🧾 Message bubble override if needed */
+        body.dark .message {
+            background-color: #3a3a3a;
+            color: var(--dark-text);
+        }
+
+        /* 🔳 Scrollbar dark */
+        body.dark ::-webkit-scrollbar-thumb {
+            background-color: #555;
+        }
+
+        body.dark ::-webkit-scrollbar-track {
+            background-color: #2a2a2a;
+        }
+
+        :root.dark-mode {
+            --primary: #1414e2;
+            --light-bg: #1f1f1f;
+            --text-color: #e4e4e4;
+            --card-bg: #2c2c2c;
+            --hover-bg: #3a3a3a;
+        }
+
+        body.dark-mode {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+        }
+
+        .account-item {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid transparent;
+        }
+
+        .account-item:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .account-item.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .account-name,
+        .account-id {
+            color: var(--text-color);
+        }
+
+        .account-unread {
+            background-color: red;
+            color: white;
+        }
+
+        /* Bubble */
+        .user-text,
+        .admin-text {
+            color: black;
+            background-color: white;
+        }
+
+        .dark-mode .user-text,
+        .dark-mode .admin-text {
+            color: white;
+            background-color: #3b3b3b;
+        }
+
+        /* Input */
+        /* #replyInput {
+            background-color: #fff;
+            color: #000;
+        } */
+
+        .dark-mode #replyInput {
+            background-color: #2c2c2c;
+            color: white;
+            border: 1px solid #555;
+        }
+
+        /* ✅ DARK MODE — ép bubble tin nhắn dùng nền xanh + chữ trắng */
+        body.dark .user-text {
+            background-color: #141ed2 !important;
+            color: white !important;
+            border: 1px solid #2f2f2f;
+        }
+
+        body.dark .admin-text {
+            background-color: var(--primary) !important;
+            color: white !important;
+        }
+
+        body:not(.dark) .user-text {
+            background-color: #141ed2;
+            color: white;
+            border: 1px solid #ccc;
+        }
+
+        body:not(.dark) .admin-text {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .message,
+        .user-text,
+        .admin-text {
+            white-space: pre-wrap;
+            /* chuyển \n thành xuống dòng */
+            word-break: break-word;
+            /* nếu từ dài thì tự ngắt */
+        }
+
+        .account-item:hover {
+            background-color: #1440e2;
+            /* ✅ xanh đậm */
+            color: white;
+            /* ✅ chữ trắng khi hover */
+        }
+
+        body.dark .account-item:hover {
+            background-color: #1a1aff;
+            color: white;
+        }
+
+        .login-screen {
+            height: 100vh;
+            background: linear-gradient(-45deg, #141ed2, #4e54c8, #8f94fb, #a3b6ee);
+            background-size: 400% 400%;
+            animation: gradientFlow 10s ease infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes gradientFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .login-box {
+            background-color: white;
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-title {
+            margin-bottom: 20px;
+            color: #141ed2;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .login-input {
+            width: 90%;
+            padding: 12px 14px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .login-button {
+            width: 97%;
+            padding: 12px 14px;
+            margin-top: 12px;
+            border: none;
+            border-radius: 10px;
+            background-color: #141ed2;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-button:hover {
+            background-color: #0f14b0;
+        }
+
+        .login-error {
+            color: red;
+            margin-top: 12px;
+            font-size: 13px;
+        }
+
+        body.dark .login-box {
+            background-color: #2a2a2a;
+            color: white;
+        }
+
+        body.dark .login-title {
+            color: #ffffff;
+        }
+
+        body.dark .login-input {
+            background-color: #1e1e1e;
+            border: 1px solid #555;
+            color: #eaeaea;
+        }
+
+        body.dark .login-button {
+            background-color: #3a4ee2;
+        }
+
+        body.dark .login-button:hover {
+            background-color: #2c3cc2;
+        }
+
+        .rainbow-text {
+            font-size: 28px;
+            font-weight: bold;
+            text-transform: uppercase;
+            background-image: linear-gradient(-45deg,
+                    #ff0000,
+                    #ff9900,
+                    #33cc33,
+                    #3399ff,
+                    #cc33ff,
+                    #ff0066,
+                    #ff0000);
+            background-size: 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: rainbowFlow 8s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes rainbowFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes bgFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes fadeInZoom {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes introBgFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes fadeZoomIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body class="dark">
+    <div id="loginScreen" class="login-screen">
+        <div class="login-box">
+            <img src="./image/Favicon.png" style="width: 60px;" alt="Logo" class="login-logo" />
+            <h2 class="login-title rainbow-text">ADMIN MBGAME</h2>
+            <input type="email" id="email" placeholder="Email..." class="login-input" />
+            <input type="password" id="password" placeholder="Mật khẩu..." class="login-input" />
+
+            <button onclick="login()" class="login-button">Đăng nhập</button>
+            <div id="loginError" class="login-error"></div>
+        </div>
+    </div>
+    <div class="container" style="display: none;">
+        <div class="sidebar">
+            <input type="text" placeholder="Tìm tài khoản..." id="searchBox" />
+            <div id="accountList"></div>
+        </div>
+        <div class="chat-box">
+            <div style="text-align: center;" class="chat-header" id="chatHeader">HỆ THỐNG KIẾM TIỀN ONLINE TỰ ĐỘNG -
+                MBGAME.ONLINE</div>
+            <div class="chat-body" id="chatBody"></div>
+            <div class="chat-footer" id="chatFooter" style="display: none;">
+                <textarea id="replyInput" rows="1" placeholder="Nhập tin nhắn..."></textarea>
+                <label for="fileInput">📎</label>
+                <input type="file" id="fileInput" accept="image/*" multiple />
+                <button class="emoji-btn" onclick="toggleEmojiPopup()">😊</button>
+                <button onclick="sendReply()">Gửi</button>
+                <div class="emoji-popup" id="emojiPopup">
+                    <span onclick="insertEmoji('😀')">😀</span>
+                    <span onclick="insertEmoji('😂')">😂</span>
+                    <span onclick="insertEmoji('😍')">😍</span>
+                    <span onclick="insertEmoji('👍')">👍</span>
+                    <span onclick="insertEmoji('🔥')">🔥</span>
+                    <span onclick="insertEmoji('❤️')">❤️</span>
+                    <span onclick="insertEmoji('😢')">😢</span>
+                    <span onclick="insertEmoji('🙏')">🙏</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button onclick="toggleDarkMode()" style="position: fixed; bottom: 670px; right: 20px;">🌓</button>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <!-- ✅ App luôn phải trước -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script> <!-- Auth sau App -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBAhJbI0ydZDGNGa1fCJZE4zYxWUZuyXL8",
+            authDomain: "chatbot-support-e1774.firebaseapp.com",
+            databaseURL: "https://chatbot-support-e1774-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "chatbot-support-e1774",
+            storageBucket: "chatbot-support-e1774.firebasestorage.app",
+            messagingSenderId: "913372631582",
+            appId: "1:913372631582:web:598a0740593bc063c5940f",
+            measurementId: "G-VG2WPPRL16"
+        };
+        // ✅ Khởi tạo
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth(); // 👈 phải khai báo sau initializeApp
+
+        function login() {
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value.trim();
+            const errorEl = document.getElementById("loginError");
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then(() => {
+                    document.getElementById("loginScreen").style.display = "none";
+
+                    // Hiện intro chuyên nghiệp
+                    const fullIntro = document.getElementById("fullIntro");
+                    fullIntro.style.display = "flex";
+
+                    // Sau 3.5s ẩn intro, hiện giao diện chính
+                    setTimeout(() => {
+                        fullIntro.style.display = "none";
+                        document.querySelector(".container").style.display = "grid";
+                    }, 3500);
+                })
+                .catch((err) => {
+                    console.log("Lỗi đăng nhập:", err.code);
+                    if (err.code === "auth/user-not-found") {
+                        errorEl.textContent = "Email không tồn tại.";
+                    } else if (err.code === "auth/wrong-password") {
+                        errorEl.textContent = "Sai mật khẩu.";
+                    } else {
+                        errorEl.textContent = "Sai tài khoản hoặc mật khẩu!";
+                    }
+                });
+        }
+        const db = firebase.database();
+
+        let allMessages = {};
+        let selectedAccount = null;
+        let unreadCounts = {};
+
+        document.getElementById("searchBox").addEventListener("input", renderAccountList);
+        document.getElementById("fileInput").addEventListener("change", sendImage);
+
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark");
+        }
+
+        function toggleEmojiPopup() {
+            const popup = document.getElementById("emojiPopup");
+            popup.style.display = popup.style.display === "block" ? "none" : "block";
+
+            document.addEventListener("click", function (e) {
+                const emojiPopup = document.getElementById("emojiPopup");
+                const emojiBtn = document.querySelector(".emoji-btn");
+                if (!emojiPopup.contains(e.target) && !emojiBtn.contains(e.target)) {
+                    emojiPopup.style.display = "none";
+                }
+            });
+
+        }
+
+        function insertEmoji(emoji) {
+            const input = document.getElementById("replyInput");
+            input.value += emoji;
+            input.focus();
+        }
+
+        function renderAccountList() {
+            const search = document.getElementById("searchBox").value.trim().toLowerCase();
+            const accountList = document.getElementById("accountList");
+            const accounts = [...new Set(Object.values(allMessages).map(msg => msg.account).filter(Boolean))];
+            accountList.innerHTML = "";
+
+            accounts.filter(acc => acc.toLowerCase().includes(search)).forEach(acc => {
+                const div = document.createElement("div");
+                div.className = "account-item" + (acc === selectedAccount ? " active" : "");
+
+                const avatar = document.createElement("div");
+                avatar.className = "account-avatar";
+                avatar.textContent = acc[0]?.toUpperCase() || "👤";
+
+                const info = document.createElement("div");
+                info.className = "account-info";
+                info.innerHTML = `
+      <div class="account-name">Người dùng ${acc.slice(-15)}</div>
+      <div class="account-id">ID: ${acc}</div>
+    `;
+
+                const badge = unreadCounts[acc] ? `<span class="account-unread">${unreadCounts[acc]}</span>` : "";
+
+                div.innerHTML = ""; // xóa nếu đã có
+                div.appendChild(avatar);
+                div.appendChild(info);
+                if (badge) div.insertAdjacentHTML("beforeend", badge);
+
+                div.onclick = () => {
+                    selectedAccount = acc;
+                    unreadCounts[acc] = 0;
+                    renderAccountList();
+                    renderMessages();
+
+                    // ✅ Khi chọn user, hiện phần nhập tin nhắn
+                    document.getElementById("chatFooter").style.display = "flex";
+                };
+
+                accountList.appendChild(div);
+            });
+        }
+
+        function renderMessages() {
+            const chatBody = document.getElementById("chatBody");
+            chatBody.innerHTML = "";
+            if (!selectedAccount) return;
+
+            const shownIds = new Set();
+
+            const messages = Object.entries(allMessages)
+                .filter(([_, m]) => m.account === selectedAccount)
+                .sort((a, b) => (a[1].time || 0) - (b[1].time || 0));
+
+            let lastTimestamp = 0;
+
+            messages.forEach(([id, msg], index) => {
+                if (!msg.message && !msg.reply) return;
+                if (shownIds.has(id)) return;
+                shownIds.add(id);
+
+                if (msg.message && !msg.read) {
+                    db.ref("messages/" + id).update({ read: true });
+                }
+
+                const wrapper = document.createElement("div");
+                const isUser = !!msg.message;
+                wrapper.className = "message-wrapper " + (isUser ? "user-message-wrapper" : "admin-message-wrapper");
+
+                let contentElement;
+
+                if (isUser && msg.message.includes("<img")) {
+                    // Ảnh từ user
+                    contentElement = document.createElement("img");
+                    const src = msg.message.match(/src="([^"]+)"/)?.[1];
+                    if (src) contentElement.src = src;
+                    contentElement.className = "user-image";
+
+                } else if (!isUser && msg.reply.includes("<img")) {
+                    // Ảnh từ admin
+                    contentElement = document.createElement("img");
+                    const src = msg.reply.match(/src="([^"]+)"/)?.[1];
+                    if (src) contentElement.src = src;
+                    contentElement.className = "admin-image";
+
+                } else {
+                    // Tin nhắn dạng text
+                    contentElement = document.createElement("div");
+                    contentElement.className = "message " + (isUser ? "user-text" : "admin-text");
+                    contentElement.innerHTML = isUser ? msg.message : msg.reply;
+                }
+
+
+                wrapper.appendChild(contentElement);
+
+                const currentTime = msg.time || Date.now();
+                const timeDiff = currentTime - lastTimestamp;
+                const isLast = index === messages.length - 1;
+                const isFar = timeDiff > 5 * 60 * 1000;
+
+                if (isLast || isFar) {
+                    const info = document.createElement("div");
+                    info.style.fontSize = "12px";
+                    info.style.color = "gray";
+                    info.style.marginTop = "4px";
+                    const dateObj = new Date(currentTime);
+                    const timeStr = dateObj.toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    });
+                    const dateStr = dateObj.toLocaleDateString('vi-VN'); // hiển thị dạng ngày/tháng/năm
+
+                    info.textContent = `${timeStr} - ${dateStr}`;
+
+                    wrapper.appendChild(info);
+                    lastTimestamp = currentTime;
+                }
+
+                chatBody.appendChild(wrapper);
+                setupImageClickZoom(); // gắn click cho ảnh mới
+
+            });
+            chatBody.scrollTop = chatBody.scrollHeight;
+
+        }
+
+        function sendReply() {
+            const input = document.getElementById("replyInput");
+            const text = input.value.trim();
+            if (!text || !selectedAccount) return;
+
+            db.ref("messages").push().set({
+                account: selectedAccount,
+                message: "",
+                reply: text,
+                time: Date.now()
+            });
+            input.value = "";
+        }
+
+        function sendImage() {
+            const files = document.getElementById("fileInput").files;
+            if (!files || !selectedAccount) return;
+            for (const file of files) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    db.ref("messages").push().set({
+                        account: selectedAccount,
+                        message: '',
+                        reply: `<img src="${e.target.result}" style="max-width: 200px; border-radius: 8px;" />`,
+                        time: Date.now()
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        let debounceTimer;
+        let updateTimeout;
+
+        db.ref("messages").on("value", snapshot => {
+            const data = snapshot.val();
+            if (!data) return;
+
+            allMessages = data;
+
+            // Đếm số tin chưa đọc
+            unreadCounts = {};
+            Object.entries(data).forEach(([id, msg]) => {
+                if (
+                    msg.message &&
+                    (!msg.reply || msg.reply === "") &&
+                    msg.account !== selectedAccount &&
+                    !msg.read
+                ) {
+                    unreadCounts[msg.account] = (unreadCounts[msg.account] || 0) + 1;
+                }
+            });
+
+            renderAccountList();
+
+            // 🧠 Tránh renderMessages() 2 lần khi Firebase update liên tục
+            clearTimeout(updateTimeout);
+            updateTimeout = setTimeout(() => {
+                if (selectedAccount) {
+                    renderMessages();
+                }
+            }, 100); // delay nhỏ để Firebase kịp update read: true trước khi render lại
+        });
+        document.getElementById("replyInput").addEventListener("keydown", function (e) {
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendReply(); // gọi hàm gửi tin nhắn
+            }
+        });
+
+        let currentZoom = 1;
+
+        function setupImageClickZoom() {
+            document.querySelectorAll('.user-image, .admin-image').forEach(img => {
+                img.onclick = function (e) {
+                    e.stopPropagation();
+                    const popup = document.getElementById("imagePopup");
+                    const overlay = document.getElementById("imagePopupOverlay");
+
+                    popup.src = this.src;
+                    popup.style.transform = "scale(1)";
+                    currentZoom = 1;
+
+                    overlay.style.display = "flex";
+                };
+            });
+        }
+
+        function closeImagePopup() {
+            const popup = document.getElementById("imagePopup");
+            popup.style.transform = "scale(1)";
+            popup.src = "";
+            document.getElementById("imagePopupOverlay").style.display = "none";
+        }
+
+        // 👇 Thêm xử lý lăn chuột để zoom ảnh
+        document.addEventListener("wheel", function (e) {
+            const popup = document.getElementById("imagePopup");
+            const overlay = document.getElementById("imagePopupOverlay");
+
+            if (overlay.style.display === "flex") {
+                e.preventDefault();
+                if (e.deltaY < 0) {
+                    currentZoom = Math.min(currentZoom + 0.1, 3); // Giới hạn zoom-in tối đa 3x
+                } else {
+                    currentZoom = Math.max(currentZoom - 0.1, 1); // Không nhỏ hơn kích thước ban đầu
+                }
+                popup.style.transform = `scale(${currentZoom})`;
+            }
+        }, { passive: false });
+
+        const replyInput = document.getElementById("replyInput");
+
+        replyInput.addEventListener("input", () => {
+            replyInput.style.height = "auto"; // reset trước
+            replyInput.style.height = replyInput.scrollHeight + "px";
+        });
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark");
+
+            // Lưu trạng thái vào localStorage
+            const isDark = document.body.classList.contains("dark");
+            localStorage.setItem("darkMode", isDark ? "on" : "off");
+        }
+
+        // Áp dụng lại khi reload
+        window.addEventListener("DOMContentLoaded", () => {
+            const savedMode = localStorage.getItem("darkMode");
+
+            if (savedMode === "off") {
+                document.body.classList.remove("dark"); // => về giao diện sáng
+            } else {
+                document.body.classList.add("dark"); // mặc định là dark
+            }
+        });
+
+    </script>
+    <script>
+        const messaging = firebase.messaging();
+
+        navigator.serviceWorker.register('firebase-messaging-sw.js')
+            .then((registration) => {
+                messaging.useServiceWorker(registration);
+
+                messaging.requestPermission()
+                    .then(() => messaging.getToken({ vapidKey: 'cxVpbG-QqYh50vihAU7sQXyJl8GNals-b5kzg_ZCAhI' }))
+                    .then((token) => {
+                        console.log('FCM Token:', token);
+
+                        // Hiển thị token ra giao diện
+                        document.body.insertAdjacentHTML('beforeend', `
+            <div style="
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                background: #fff;
+                color: #000;
+                padding: 10px;
+                border: 2px solid #000;
+                z-index: 9999;
+                max-width: 90%;
+                box-shadow: 0 0 10px rgba(0,0,0,0.3);
+                font-size: 14px;
+                word-break: break-word;
+            ">
+                <strong>FCM Token của bạn:</strong><br>
+                <textarea style="width: 100%; height: 100px;">${token}</textarea>
+            </div>
+        `);
+                    })
+                    .catch((err) => {
+                        console.log('Không lấy được token:', err);
+                    });
+            })
+            .catch((err) => {
+                console.log('Không thể đăng ký Service Worker:', err);
+            });
+    </script>
+
+    <!-- popup hiển thị ảnh -->
+    <div id="imagePopupOverlay" style="display: none;" onclick="closeImagePopup()">
+        <img id="imagePopup" src="" />
+    </div>
+    <div id="fullIntro" style="
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #141ed2, #4e54c8, #8f94fb);
+    background-size: 300% 300%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    flex-direction: column;
+    animation: introBgFlow 6s ease infinite;
+">
+        <h1 style="
+        color: white;
+        font-size: 60px;
+        font-weight: bold;
+        letter-spacing: 2px;
+        text-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+        animation: fadeZoomIn 1.5s ease;
+        margin: 0;
+    ">
+            MBGAME.ONLINE
+        </h1>
+        <p style="
+        color: rgba(255,255,255,0.85);
+        font-size: 18px;
+        margin-top: 16px;
+        text-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        animation: fadeZoomIn 2s ease;
+    ">
+            Hệ thống kiếm tiền online tự động
+        </p>
+    </div>
+    <script src="firebase.js"></script>
+
+</body>
+
+</html>
