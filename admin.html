@@ -754,7 +754,16 @@
         </div>
     </div>
     <button onclick="toggleDarkMode()" style="position: fixed; bottom: 670px; right: 20px;">🌓</button>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <!-- ✅ App luôn phải trước -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script> <!-- Auth sau App -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
     <script>
+
+        // ✅ Khởi tạo
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth(); // 👈 phải khai báo sau initializeApp
 
         function login() {
             const email = document.getElementById("email").value.trim();
@@ -786,6 +795,7 @@
                     }
                 });
         }
+        const db = firebase.database();
 
         let allMessages = {};
         let selectedAccount = null;
@@ -1082,6 +1092,7 @@
 
     </script>
     <script>
+        const messaging = firebase.messaging();
 
         navigator.serviceWorker.register('firebase-messaging-sw.js')
             .then((registration) => {
@@ -1157,16 +1168,8 @@
             Hệ thống kiếm tiền online tự động
         </p>
     </div>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
     <script src="firebase.js"></script>
-    <script>
-        const auth = firebase.auth();
-        const db = firebase.database();
-        const messaging = firebase.messaging();
-    </script>
+
 </body>
 
 </html>
