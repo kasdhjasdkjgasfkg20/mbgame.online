@@ -2299,7 +2299,2286 @@
             }
         };
     </script>
+    <!DOCTYPE html>
+    <html lang="vi">
 
+    <head>
+        <meta charset="UTF-8">
+        <title>LiveChat Hỗ Trợ</title>
+        <style>
+            @media screen and (max-width: 768px) {
+                .chat-body {
+                    max-height: calc(100vh - 160px);
+                    /* trừ header + footer + khoảng trắng */
+                    overflow-y: auto !important;
+                    padding: 12px 12px;
+                    background-color: #ffffff;
+                }
+
+                .chat-toggle {
+                    right: 20px !important;
+                    bottom: 20px !important;
+                    z-index: 1000 !important;
+                }
+
+                .chat-header {
+                    border-radius: 0 !important;
+                }
+
+                .chat-title {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    /* khoảng cách giữa tên và chức danh */
+                    flex-wrap: nowrap;
+                    /* ✅ Ngăn không cho xuống dòng */
+                    white-space: nowrap;
+                    /* ✅ Ngăn text bị ngắt dòng */
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                .chat-footer {
+                    border-radius: 0 !important;
+                }
+
+                .inner-box {
+                    margin: 16px !important;
+                    border-radius: 8px !important;
+                }
+
+                .powered-by {
+                    font-size: 12px !important;
+                }
+            }
+
+            /* .dark-theme body {
+            background-color: var(--bg-dark);
+            color: var(--text-dark);
+        } */
+
+            /* .dark-theme .chat-box {
+            background-color: var(--bg-dark);
+            color: var(--text-dark);
+            border-color: var(--border-dark);
+        }
+
+        .dark-theme .message {
+            background-color: var(--chat-bg-dark);
+            color: var(--text-dark);
+        }
+
+        .dark-theme .chat-footer input[type="text"] {
+            background-color: var(--chat-bg-dark);
+            color: var(--text-dark);
+            border: 1px solid var(--border-dark);
+        }
+
+        .dark-theme .chat-footer button {
+            background-color: var(--primary-blue);
+        }
+
+        .dark-theme .inner-box {
+            background-color: var(--chat-bg-dark);
+            color: var(--text-dark);
+            border: 1px solid var(--border-dark);
+        }
+
+        .dark-theme .account-input input[type="text"],
+        .dark-theme .account-input button {
+            background-color: var(--chat-bg-dark);
+            color: var(--text-dark);
+            border: 1px solid var(--border-dark);
+        }
+
+        .dark-theme .menu-item:hover {
+            background-color: #3a3b3c;
+        }
+
+        .dark-theme .tooltip-text {
+            background-color: #3a3b3c;
+        } */
+            .chat-box.dark-theme {
+                background-color: var(--bg-dark);
+                color: var(--text-dark);
+            }
+
+            .chat-box.dark-theme .chat-header,
+            .chat-box.dark-theme .chat-footer,
+            .chat-box.dark-theme .inner-box,
+            .chat-box.dark-theme .account-input input[type="text"],
+            .chat-box.dark-theme .account-input button,
+            .chat-box.dark-theme .chat-footer input[type="text"],
+            .chat-box.dark-theme .chat-footer button,
+            .chat-box.dark-theme .message,
+            .chat-box.dark-theme .powered-by {
+                background-color: var(--chat-bg-dark) !important;
+                color: var(--text-dark) !important;
+                /* border-color: var(--border-dark) !important; */
+            }
+
+            .chat-box.dark-theme .tooltip-text {
+                background-color: var(--border-dark);
+                color: var(--text-dark);
+            }
+
+            .chat-box.dark-theme input::placeholder {
+                color: #ccc;
+            }
+
+            .chat-box.dark-theme .chat-header {
+                border-top-left-radius: 16px;
+                border-top-right-radius: 16px;
+            }
+
+            .chat-box.dark-theme .chat-footer {
+                border-bottom-left-radius: 16px;
+                border-bottom-right-radius: 16px;
+            }
+
+            .chat-box.dark-theme .chat-profile-box {
+                background-color: var(--chat-bg-dark);
+            }
+
+            .chat-box.dark-theme .chat-name {
+                color: var(--text-dark);
+            }
+
+            .chat-box.dark-theme .chat-role {
+                color: #aaa;
+            }
+
+            .chat-box.dark-theme .account-input button,
+            .chat-box.dark-theme #restartChatBtn button {
+                border: 1px solid #ddd !important;
+                background-color: var(--chat-bg-dark);
+                color: var(--text-dark);
+            }
+
+            .chat-box.dark-theme .account-input button:hover,
+            .chat-box.dark-theme #restartChatBtn button:hover {
+                border-color: var(--primary-blue);
+                box-shadow: 0 0 0 2px rgba(35, 116, 225, 0.2);
+            }
+
+            .chat-box.dark-theme .powered-by {
+                background-color: transparent !important;
+                color: var(--text-dark) !important;
+            }
+
+            .chat-box.dark-theme .tooltip-icon {
+                color: var(--text-dark) !important;
+            }
+
+            .chat-box.dark-theme .menu-item span,
+            .chat-box.dark-theme .menu-item label {
+                color: var(--text-dark) !important;
+            }
+
+            :root {
+                --bg-light: #ffffff;
+                --bg-dark: #242526;
+                /* nền chính Messenger Dark */
+                --text-light: #000000;
+                --text-dark: #e4e6eb;
+                /* màu chữ nhẹ nhưng rõ */
+
+                --chat-bg-light: #f0f2f5;
+                /* nền khung chat sáng */
+                --chat-bg-dark: #3a3b3c;
+                /* nền khung chat tối */
+
+                --border-dark: #4e4f50;
+                /* màu viền trong dark mode */
+                --border-light: #dcdcdc;
+
+                --input-bg-dark: #4e4f50;
+                /* nền input trong dark mode */
+                --placeholder-dark: #b0b3b8;
+                /* chữ gợi ý mờ trong input */
+
+                --primary-blue: #0084ff;
+                /* màu nút gửi Messenger */
+                --primary-blue-hover: #1877f2;
+
+                --bubble-user: #0084ff;
+                /* tin nhắn người dùng */
+                --bubble-admin: #3e4042;
+                /* tin nhắn từ hệ thống */
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: var(--bg-light);
+                color: var(--text-light);
+            }
+
+
+            .chat-toggle {
+                position: fixed;
+                bottom: 20px;
+                right: 30px;
+                background-color: #141ed2;
+                padding: 14px 18px;
+                border-radius: 50%;
+                font-size: 20px;
+                cursor: pointer;
+                z-index: 1000;
+            }
+
+            .chat-box {
+                background: var(--chat-bg);
+                position: fixed;
+                bottom: 15px;
+                right: 0;
+                width: 365px;
+                /* hoặc 100% với max-width */
+                max-width: 100%;
+                height: 95vh;
+                margin: auto;
+                border-radius: 16px;
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+                display: flex;
+                flex-direction: column;
+                background: white;
+                z-index: 1001;
+                margin-right: 30px;
+                justify-content: space-between;
+            }
+
+
+            .chat-header {
+                border-top-left-radius: 16px;
+                border-top-right-radius: 16px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px;
+                background-color: #fff;
+                /* border-bottom: 1px solid #eee; */
+                position: relative;
+            }
+
+            .chat-header>div {
+                display: flex;
+                align-items: center;
+            }
+
+            .chat-header .chat-title {
+                flex: 1;
+                text-align: center;
+                flex-direction: column;
+                line-height: 1.2;
+            }
+
+
+            .chat-body {
+                display: flex;
+                height: 100%;
+                background: var(--chat-bg);
+                color: var(--text-color);
+                padding: 15px;
+                flex: 1;
+                /* overflow-y: auto; */
+                max-height: unset;
+            }
+
+            .chat-footer {
+                /* border-top: 1px solid #eee; */
+                padding: 10px;
+            }
+
+            .chat-footer input[type="text"] {
+                width: 75%;
+                padding: 10px;
+                margin-right: 5px;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+
+            }
+
+
+            .chat-footer input[type="file"] {
+                display: none;
+            }
+
+            .chat-footer button {
+                padding: 8px 10px;
+                border: none;
+                background-color: #007bff;
+                color: white;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            /* .message {
+            background: var(--msg-bg);
+            color: var(--text-color);
+            margin-bottom: 10px;
+            background: #f1f1f1;
+            padding: 10px;
+            border-radius: 8px;
+        } */
+
+            /* .logout-note {
+            text-align: center;
+            font-size: 0.8rem;
+            color: gray;
+            padding: 10px 20px;
+            margin-top: 10px;
+        } */
+
+
+            .account-input {
+                padding: 10px;
+            }
+
+            .account-input input[type="text"] {
+                width: 100%;
+                padding: 10px;
+                font-size: 14px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                margin-top: 6px;
+            }
+
+            .account-input button {
+                width: 100%;
+                margin-top: 10px;
+                background-color: #000;
+                color: white;
+                padding: 10px;
+                border-radius: 6px;
+                font-weight: bold;
+                border: none;
+                cursor: pointer;
+                transition: border 0.2s ease, box-shadow 0.2s ease;
+
+            }
+
+            #account {
+                width: 100%;
+                padding: 10px;
+                border: 2px solid #d5cccc;
+                /* viền ban đầu */
+                border-radius: 6px;
+                outline: none;
+                transition: border-color 0.2s ease;
+            }
+
+            #account:focus {
+                border-color: #797373;
+            }
+
+            .inner-box {
+                margin: 45px;
+                border-radius: 12px;
+                border: 1px solid #ddd;
+                box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+                padding: 10px;
+                background-color: #fff;
+                overflow: hidden;
+            }
+
+            .chat-title {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: row;
+                gap: 10px;
+            }
+
+            #shrink {
+                padding-right: 5px;
+            }
+
+            #chatMenuToggle {
+                padding-left: 5px;
+            }
+
+            .tooltip-wrapper {
+                position: relative;
+                display: inline-block;
+            }
+
+            .tooltip-icon {
+                padding: 4px;
+                /* nhỏ gọn hơn */
+                border-radius: 50%;
+                transition: background-color 0.2s ease, box-shadow 0.2s ease;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 28px;
+                height: 28px;
+            }
+
+            .tooltip-wrapper:hover .tooltip-icon {
+                background-color: #e6e6e6;
+                box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
+            }
+
+            /* Tooltip chữ hiển thị ở DƯỚI */
+            .tooltip-text {
+                visibility: hidden;
+                opacity: 0;
+                background-color: #333;
+                color: #fff;
+                text-align: center;
+                padding: 6px 10px;
+                border-radius: 6px;
+                position: absolute;
+                top: 130%;
+                /* phía dưới icon */
+                left: 50%;
+                transform: translateX(-50%);
+                transition: opacity 0.2s;
+                white-space: nowrap;
+                font-size: 13px;
+                z-index: 999;
+
+                max-width: 200px;
+                overflow-wrap: break-word;
+                word-break: break-word;
+                box-sizing: border-box;
+            }
+
+
+            .tooltip-wrapper:hover .tooltip-text {
+                visibility: visible;
+                opacity: 1;
+            }
+
+            /* Ẩn tooltip khi đang mở menu */
+            .tooltip-wrapper.menu-open .tooltip-text {
+                display: none !important;
+            }
+
+
+            .tooltip-text-right {
+                top: 35px;
+                padding: 5px;
+                right: 0;
+                left: auto;
+                transform: none;
+            }
+
+            .tooltip-text-left {
+                right: auto;
+                left: 0;
+                transform: none;
+            }
+
+            .chat-profile-box {
+                background-color: #f4f4f4;
+                border-radius: 30px;
+                padding: 8px 14px;
+                display: flex;
+                align-items: center;
+                /* Canh logo và text nằm giữa theo chiều dọc */
+                gap: 10px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                max-width: max-content;
+                margin: auto;
+            }
+
+            .avatar-wrapper {
+                position: relative;
+                width: 32px;
+                height: 32px;
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .avatar-logo {
+                width: 100%;
+                height: 100%;
+                background-color: #141ed2;
+                border-radius: 50%;
+                padding: 6px;
+                object-fit: cover;
+            }
+
+            .status-dot {
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 10px;
+                height: 10px;
+                background-color: #00c853;
+                border: 2px solid white;
+                border-radius: 50%;
+            }
+
+            .chat-name-role {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                line-height: 1.2;
+            }
+
+
+            .chat-name {
+                font-weight: bold;
+                font-size: 13px;
+            }
+
+            .chat-role {
+                font-size: 13px;
+                color: #888;
+                margin-top: 5px;
+            }
+
+            .user-avatar-inline {
+                position: absolute;
+                top: 117px;
+                /* chỉnh lên hoặc xuống */
+                left: 15px;
+                /* căn trái */
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                background-color: #f4f4f4;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
+                z-index: 10;
+            }
+
+
+            /* .user-avatar-inline img {
+            width: 70%;
+            height: 70%;
+            object-fit: contain;
+        } */
+
+            #chatMenu {
+                display: none;
+                position: absolute;
+                top: 40px;
+                left: 0;
+                background: white;
+                border: 1px solid #ddd;
+                border-radius: 10px;
+                padding: 8px 0;
+                z-index: 1000;
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+                width: 220px;
+                font-size: 14px;
+                animation: fadeInMenu 0.2s ease;
+            }
+
+
+            @keyframes fadeInMenu {
+                from {
+                    opacity: 0;
+                    transform: translateY(-5px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .menu-item {
+                padding: 10px 16px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                cursor: pointer;
+                transition: background-color 0.2s;
+            }
+
+            .menu-item:hover {
+                background-color: #f5f5f5;
+            }
+
+            .menu-item-icon {
+                width: 18px;
+                height: 18px;
+                flex-shrink: 0;
+            }
+
+            .toggle-switch {
+                position: relative;
+                display: inline-block;
+                width: 34px;
+                height: 18px;
+            }
+
+            .toggle-switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+            .slider {
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: #ccc;
+                border-radius: 18px;
+                transition: 0.3s;
+            }
+
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 14px;
+                width: 14px;
+                left: 2px;
+                bottom: 2px;
+                background-color: white;
+                border-radius: 50%;
+                transition: 0.3s;
+            }
+
+            .toggle-switch input:checked+.slider {
+                background-color: #4caf50;
+            }
+
+            .toggle-switch input:checked+.slider:before {
+                transform: translateX(16px);
+            }
+
+            .powered-by {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 6px;
+                font-size: 13px;
+                margin-top: -25px;
+            }
+
+            .powered-logo {
+                width: 18px;
+                height: 18px;
+                object-fit: contain;
+                position: relative;
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: #141ed2;
+                border-radius: 50%;
+                padding: 2px;
+                object-fit: cover;
+            }
+
+            .chat-main {
+                flex: 1;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+            }
+
+            #chatContent {
+                /* overflow-y: auto; */
+                max-height: 100%;
+            }
+
+
+
+            .chat-name-role {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                justify-content: center;
+                height: 36px;
+                /* cố định chiều cao khung */
+                position: relative;
+            }
+
+            .chat-role {
+                position: absolute;
+                top: 18px;
+                left: 0;
+                font-size: 13px;
+                color: #666;
+                opacity: 1;
+                transition: opacity 0.3s ease;
+            }
+
+            .chat-role.hidden {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            .chat-name {
+                transition: transform 0.3s ease;
+                margin-top: -14px;
+            }
+
+            .chat-name.centered {
+                transform: translateY(9px);
+            }
+
+            /* Hiển thị rõ chữ Âm thanh / Chế độ tối khi bật dark mode */
+            .chat-box.dark-theme .menu-item label,
+            .chat-box.dark-theme .menu-item span {
+                color: var(--text-dark) !important;
+                font-weight: 500;
+            }
+
+            /* Hiển thị rõ icon 3 chấm và dấu trừ khi click */
+            .chat-box.dark-theme .tooltip-icon {
+                color: var(--text-dark) !important;
+                background-color: transparent !important;
+                font-weight: bold;
+            }
+
+            /* Khi hover vẫn giữ màu rõ ràng */
+            .chat-box.dark-theme .tooltip-wrapper:hover .tooltip-icon {
+                background-color: #4e4f50 !important;
+            }
+
+            /* Khi dark mode và menu đang mở, vẫn hiển thị rõ icon */
+            .chat-box.dark-theme .tooltip-wrapper.menu-open .tooltip-icon {
+                background-color: var(--border-dark) !important;
+                color: var(--text-dark) !important;
+            }
+
+            /* Khi hover vào icon trong dark mode */
+            .chat-box.dark-theme .tooltip-wrapper:hover .tooltip-icon {
+                background-color: var(--border-dark) !important;
+                color: var(--text-dark) !important;
+            }
+
+            .chat-box.dark-theme .menu-item label span:first-child {
+                /* font-weight: 700; */
+                color: #aeb2bc !important;
+                /* trắng sáng khi ở dark mode */
+            }
+
+            /* cập nhật style icon trong khung nhập tin nhắn */
+            .message-input-container {
+                /* margin-top:-70px;  ← bỏ hẳn */
+                display: flex;
+                align-items: center;
+                padding: 4px 12px;
+                background: #fff;
+                border: 1px solid #ccc;
+                border-radius: 12px;
+                gap: 8px;
+                position: relative;
+                z-index: 2;
+                margin-bottom: 25px;
+                /* vẫn cao hơn footer */
+            }
+
+
+            .message-input-container input[type="text"] {
+                flex: 1;
+                border: none;
+                outline: none;
+                font-size: 14px;
+                line-height: 18px;
+                padding: 10px;
+                resize: none;
+                overflow-y: hidden;
+                height: auto;
+                min-height: 36px;
+                max-height: 120px;
+            }
+
+
+            .message-input-container .icon-btn {
+                cursor: pointer;
+                font-size: 16px;
+                padding: 4px;
+                border-radius: 6px;
+                transition: background 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 32px;
+                height: 32px;
+            }
+
+            .message-input-container .icon-btn:hover {
+                background-color: #f0f0f0;
+            }
+
+            .message-input-container .send-btn {
+                border: none;
+                background: transparent;
+                color: #000;
+                font-size: 16px;
+                padding: 4px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 32px;
+                height: 32px;
+                border-radius: 6px;
+                opacity: 0.5;
+                transition: opacity 0.2s ease;
+            }
+
+            .message-input-container .send-btn:enabled {
+                opacity: 1;
+                color: #000;
+                cursor: pointer;
+            }
+
+            .emoji-popup {
+                position: absolute;
+                top: -150px;
+                right: 0;
+                background: white;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                border-radius: 10px;
+                display: none;
+                flex-wrap: wrap;
+                flex-direction: row;
+                z-index: 1000;
+                padding: 8px;
+                gap: 6px;
+                max-width: 240px;
+            }
+
+            .attachment-popup {
+                top: -53px;
+                position: absolute;
+                right: 0;
+                background: white;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                border-radius: 10px;
+                display: none;
+                flex-wrap: wrap;
+                flex-direction: row;
+                z-index: 1000;
+                padding: 8px;
+                gap: 6px;
+                max-width: 240px;
+            }
+
+            .emoji {
+                font-size: 16px;
+                cursor: pointer;
+                width: 40px;
+                height: 40px;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: background-color 0.2s ease;
+            }
+
+            .emoji:hover {
+                background-color: #f0f0f0;
+            }
+
+            .attachment-item {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 8px 12px;
+                border-radius: 8px;
+                transition: background-color 0.2s ease;
+                font-size: 14px;
+                cursor: pointer;
+            }
+
+            .attachment-popup:hover {
+                background-color: #f0f0f0;
+            }
+
+            /* .attachment-item img {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+            flex-shrink: 0;
+        } */
+
+            .message-input-container:focus {
+                background-color: #797373;
+            }
+
+            #accountDisplay {
+                text-align: left;
+                /* bỏ center */
+                padding: 12px 10px;
+                /* 12px trên dưới, 15px trái phải */
+                font-size: 14px;
+                color: #111;
+                background: transparent;
+                /* border-bottom: 1px solid #eee; */
+                margin: 0;
+            }
+
+
+            .account-label {
+                display: block;
+                font-weight: 600;
+                font-size: 15px;
+                color: #007bff;
+                /* xanh nhẹ, dễ nhìn */
+                margin-bottom: 4px;
+            }
+
+            .account-value {
+                display: block;
+                font-weight: bold;
+                font-size: 18px;
+                color: #333;
+            }
+
+            /* KHUNG TIN NHẮN CHUNG */
+            .message.user-text {
+                /* max-width: 50%; */
+                display: inline-block;
+                padding: 10px 14px;
+                border-radius: 16px;
+                font-size: 14px;
+                background-color: #141ed2;
+                color: white;
+                line-height: 1.4;
+
+                white-space: pre-wrap;
+                overflow-wrap: break-word;
+                word-wrap: break-word;
+            }
+
+
+            .message.user-image,
+            .message.user-image img {
+                max-width: 70%;
+                /* padding: 10px 14px; */
+                border-radius: 16px;
+                word-wrap: break-word;
+                line-height: 1.4;
+                font-size: 14px;
+                /* background-color: #141ed2; */
+                color: white;
+            }
+
+            /* USER BÊN PHẢI */
+            .user-message-wrapper {
+                display: flex;
+                justify-content: flex-end;
+                padding: 6px 10px;
+            }
+
+            /* ADMIN BÊN TRÁI */
+            .admin-message-wrapper {
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
+                padding: 6px 10px;
+                justify-content: flex-start;
+                width: 100%;
+                /* ✅ thêm dòng này để container rộng đầy đủ */
+            }
+
+
+            /* AVATAR ADMIN */
+            .admin-avatar {
+                width: 28px;
+                height: 28px;
+                border-radius: 50%;
+                background-color: #f0f0f0;
+                overflow: hidden;
+                flex-shrink: 0;
+            }
+
+            .admin-avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            /* KHUNG BONG BÓNG ADMIN */
+            .admin-message-bubble {
+                max-width: 75%;
+                display: inline-block;
+                padding: 10px 14px;
+                border-radius: 16px;
+                font-size: 14px;
+                background-color: #141ed2;
+                color: white;
+                line-height: 1.4;
+
+                white-space: pre-wrap;
+                overflow-wrap: break-word;
+                word-break: break-word;
+            }
+
+
+            /* Ô HIỂN THỊ SỐ TÀI KHOẢN */
+            .account-info-box {
+                background-color: white;
+                border-radius: 12px;
+                padding: 14px 16px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+                max-width: 80%;
+                font-size: 14px;
+                line-height: 1.5;
+                color: #000;
+            }
+
+            /* ẢNH GỬI TRONG TIN NHẮN: giữ đúng tỉ lệ, không bo méo */
+            .message img {
+                all: unset !important;
+                display: block !important;
+                max-width: 100% !important;
+                height: auto !important;
+                object-fit: contain !important;
+                margin-top: 8px;
+            }
+
+            /* KHÔNG ÁP DỤNG CSS ẢNH CHO AVATAR */
+            .admin-message-wrapper img:not(.avatar-logo),
+            .user-message-wrapper img:not(.avatar-logo) {
+                max-width: 100% !important;
+                height: auto !important;
+                display: block !important;
+                object-fit: contain !important;
+            }
+
+            /* THANH CUỘN MƯỢT HƠN */
+            #scroll-wrapper {
+                flex: 1;
+                overflow-y: auto;
+                height: 100%;
+                padding: 0;
+            }
+
+
+            #scroll-wrapper::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            #scroll-wrapper::-webkit-scrollbar-thumb {
+                background-color: rgba(0, 0, 0, 0.2);
+                border-radius: 8px;
+            }
+
+            /* 1️⃣  Wrapper tin nhắn user – bỏ flex, căn phải bình thường */
+            .user-message-wrapper {
+                display: block;
+                /* thay cho display:flex */
+                text-align: left;
+                /* vẫn đẩy bong bóng sang phải */
+                /* KHÔNG đặt max-width ở đây nữa */
+            }
+
+            /* 2️⃣  Bong bóng user – giới hạn 50% khung chat */
+            .user-message-wrapper .message {
+                display: inline-block;
+                max-width: 70%;
+                /* dài quá nửa thì mới xuống dòng */
+                word-break: normal;
+                /* không bẻ giữa chữ ngắn */
+                overflow-wrap: break-word;
+                /* chỉ bẻ khi từ quá dài */
+            }
+
+            #messageInput {
+                position: absolute;
+                opacity: 0;
+                pointer-events: none;
+                height: 0;
+            }
+
+            /* Ô gõ contenteditable giả */
+            .message-editor {
+                flex: 1;
+                min-height: 36px;
+                max-height: 120px;
+                line-height: 18px;
+                padding: 10px;
+                border: none;
+                outline: none;
+                overflow-y: auto;
+                white-space: pre-wrap;
+                word-break: break-word;
+                font-size: 14px;
+            }
+
+            /* thêm vào cuối <style> */
+            .chat-bottom {
+                position: absolute;
+                /* cố định đáy chat-box */
+                bottom: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                z-index: 0;
+                /* thấp hơn ô nhập */
+            }
+
+            .message-input-container {
+                position: relative;
+                /* làm mốc cho editor */
+                z-index: 2;
+                /* cao hơn footer */
+            }
+
+            .message-editor {
+                flex: 1;
+                min-height: 36px;
+                max-height: 120px;
+                line-height: 18px;
+                padding: 10px;
+                border: none;
+                outline: none;
+                overflow-y: auto;
+                white-space: pre-wrap;
+                word-break: break-word;
+                font-size: 14px;
+
+                /* Thêm dòng này để ẩn scrollbar */
+                scrollbar-width: none;
+                /* Firefox */
+                -ms-overflow-style: none;
+                /* IE/Edge */
+            }
+
+            /* Thêm đoạn này để ẩn scrollbar trên Chrome, Safari */
+            .message-editor::-webkit-scrollbar {
+                display: none;
+            }
+
+
+            /* Placeholder “Viết tin nhắn…” khi khung gõ rỗng */
+            .message-editor:empty:before {
+                content: attr(data-placeholder);
+                color: #888;
+                /* màu xám nhạt */
+                pointer-events: none;
+                /* không ảnh hưởng tới việc gõ */
+            }
+
+            .message-hover-time {
+                display: none;
+                position: absolute;
+                top: -4px;
+                font-size: 10px;
+                color: #888;
+                background: rgba(255, 255, 255, 0.9);
+                padding: 2px 6px;
+                border-radius: 6px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                white-space: nowrap;
+                z-index: 10;
+            }
+
+            .message-wrapper,
+            .admin-message-wrapper {
+                position: relative;
+            }
+
+            .message-wrapper:hover .message-hover-time,
+            .admin-message-wrapper:hover .message-hover-time {
+                display: block;
+            }
+
+            #imagePopupOverlay {
+                overflow: hidden;
+                cursor: grab;
+            }
+
+            #popupImage {
+                transition: transform 0.2s ease;
+                user-select: none;
+                cursor: grab;
+            }
+
+            .chat-box.dark-theme .account-value {
+                color: var(--text-dark) !important;
+                opacity: 0.9;
+            }
+
+            .chat-box.dark-theme .message-input-container {
+                background-color: var(--chat-bg-dark);
+                border: 1px solid var(--border-dark);
+            }
+
+            .chat-box.dark-theme .message-editor {
+                color: var(--text-dark);
+                background: transparent;
+            }
+
+            .chat-box.dark-theme .message-editor:empty:before {
+                color: #aaa;
+            }
+
+            .chat-box.dark-theme .attachment-popup .attachment-item {
+                color: var(--text-dark);
+                /* Hoặc dùng #fff nếu không có biến màu */
+                opacity: 0.95;
+            }
+
+            .chat-box.dark-theme .attachment-popup {
+                background-color: var(--chat-bg-dark);
+                /* nền tối cho dark mode */
+                color: #ffffff;
+                /* đảm bảo chữ sáng */
+            }
+
+            .chat-box.dark-theme .attachment-item {
+                color: #ffffff !important;
+                /* chữ trắng rõ */
+                opacity: 1 !important;
+                /* bỏ làm mờ */
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .chat-box.dark-theme .attachment-item img {
+                filter: brightness(2);
+                /* làm sáng icon trong nền tối */
+            }
+
+            /* Nền popup emoji trong dark mode */
+            .chat-box.dark-theme .emoji-popup {
+                background-color: var(--chat-bg-dark);
+                color: #ffffff;
+                border-color: rgba(255, 255, 255, 0.1);
+            }
+
+            /* Nền khi hover emoji */
+            .chat-box.dark-theme .emoji-button:hover {
+                background-color: rgba(255, 255, 255, 0.08);
+            }
+
+            /* Emoji được chọn */
+            .chat-box.dark-theme .emoji-button.selected {
+                background-color: rgba(255, 255, 255, 0.12);
+                outline-color: rgba(255, 255, 255, 0.2);
+                outline-style: solid;
+                outline-width: 2px;
+            }
+
+            .chat-box.dark-theme .message.user-text {
+                background-color: #141ed2 !important;
+                color: #ffffff !important;
+            }
+
+            .chat-box.dark-theme .message.user-image {
+                background-color: #141ed2 !important;
+                color: #ffffff !important;
+            }
+
+            @media screen and (max-width: 768px) {
+                .chat-box {
+                    width: 100% !important;
+                    height: 100vh !important;
+                    bottom: 0 !important;
+                    right: 0 !important;
+                    margin: 0 !important;
+                    border-radius: 0 !important;
+                    box-shadow: none !important;
+                    z-index: 9999 !important;
+                }
+
+                .chat-toggle {
+                    right: 20px !important;
+                    bottom: 20px !important;
+                    z-index: 1000 !important;
+                }
+
+                .chat-header {
+                    border-radius: 0 !important;
+                }
+
+                .chat-footer {
+                    border-radius: 0 !important;
+                }
+
+                .inner-box {
+                    margin: 16px !important;
+                    border-radius: 8px !important;
+                }
+
+                .powered-by {
+                    font-size: 12px !important;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="chat-toggle" onclick="toggleChat()">
+            <img src="https://cdn-icons-png.flaticon.com/128/10503/10503384.png" alt="support icon" width="28" />
+        </div>
+        <div class="chat-box" id="chatBox">
+            <div class="chat-main">
+                <div class="chat-header">
+                    <div class="tooltip-wrapper">
+                        <div style="position: relative;">
+                            <div class="tooltip-icon" id="chatMenuToggle" style="cursor: pointer; font-size: 22px;">⋯
+                            </div>
+                            <div class="tooltip-text tooltip-text-left">Tùy chọn</div>
+                        </div>
+                        <div id="chatMenu">
+                            <div class="menu-item">
+                                <img id="soundIcon" src="https://cdn-icons-png.flaticon.com/128/3721/3721868.png"
+                                    class="menu-item-icon" />
+                                <label for="soundToggle"
+                                    style="flex: 1; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+                                    <span>Âm thanh</span>
+                                    <span class="toggle-switch">
+                                        <input type="checkbox" id="soundToggle" checked onchange="toggleSoundIcon()">
+                                        <span class="slider"></span>
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="menu-item">
+                                <img id="themeIcon" src="https://cdn-icons-png.flaticon.com/128/4623/4623236.png"
+                                    class="menu-item-icon" />
+
+                                <label for="themeToggle"
+                                    style="flex: 1; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+                                    <span>Chế độ tối</span>
+                                    <span class="toggle-switch">
+                                        <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
+                                        <span class="slider"></span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-title chat-profile-box" onclick="toggleRole()">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="avatar-wrapper">
+                                <img src="https://cdn-icons-png.flaticon.com/128/10503/10503384.png" alt="Logo"
+                                    class="avatar-logo">
+                                <span class="status-dot"></span>
+                            </div>
+                            <div class="chat-name-role toggle-name-role">
+                                <div class="chat-name">Admin Hỗ Trợ</div>
+                                <div style="margin-top: 2px;" class="chat-role chat-role-toggle" id="chatRole">Game
+                                    Support
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tooltip-wrapper">
+                        <div class="tooltip-icon" id="shrink" onclick="minimizeChat()"
+                            style="cursor: pointer; font-size: 22px;">–</div>
+                        <div class="tooltip-text tooltip-text-right">Thu nhỏ cửa sổ</div>
+                    </div>
+                </div>
+
+                <!-- <div class="user-avatar-inline">
+                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="user icon">
+            </div> -->
+                <div id="scroll-wrapper"
+                    style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+                    <div id="innerBox" class="inner-box" style="position: relative;">
+                        <div class="chat-body" id="chatBody">
+                            <!-- <div id="accountDisplay" style="display: none;">
+                            <span class="account-label">Số Tài Khoản:</span>
+                            <span class="account-value" id="accountNumberText"></span>
+                        </div> -->
+                            <div id="beforeChat">
+                                <!-- ⚠️ KHUNG LƯU Ý -->
+                                <div class="title"
+                                    style="font-size: 14px; margin-bottom: 15px; padding-left: 10px; margin-top: -10px;">
+                                    <p><strong>⚠️ Lưu ý:</strong></p>
+                                    <ul style="padding-left: 18px;">
+                                        <li>Đặt <strong>L</strong> kết quả gồm <strong>1 - 3 - 5 - 7</strong></li>
+                                        <li>Đặt <strong>C</strong> kết quả gồm <strong>2 - 4 - 6 - 8</strong></li>
+                                    </ul>
+                                    <p>Nếu kết quả ra số <strong>0</strong> hoặc <strong>9</strong> nghĩa là bạn <strong
+                                            style="color: red;">THUA</strong>, vui lòng chơi lại! ❌</p>
+                                    <p>👉🏻 Bạn thắng mà vẫn chưa nhận được tiền thưởng? Vui lòng chụp bill Admin kiểm
+                                        tra
+                                        cho
+                                        nhé!</p>
+                                </div>
+                                <!-- 👤 PHẦN NHẬP SỐ TÀI KHOẢN -->
+                                <div class="account-input" id="accountInputSection">
+                                    <label for="account">Số Tài Khoản:</label>
+                                    <input type="text" id="account" placeholder="" autocomplete="off">
+                                    <button onclick="startChat()">Bắt đầu chat</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ✅ PHẦN THÔNG BÁO VÀ NÚT -->
+                    <div class="logout-note" id="logoutNote"
+                        style="text-align: center; font-size: 13px; color: #666; margin: 10px 20px;"></div>
+
+                    <div id="restartChatBtn" style="display: none; padding: 0 50px 50px;">
+                        <button onclick="restartChat()" style="
+            width: 100%;
+            background-color: #000;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;">
+                            Bắt đầu chat lại
+                        </button>
+                    </div>
+                    <div id="chatContent" style="display:none;">
+                        <div id="accountDisplay" style="display: none;">
+                            <div class="account-label">Số Tài Khoản:</div>
+                            <div class="account-value" id="accountNumberText"></div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="chat-footer" id="chatFooter" style="display: none;">
+                    <div class="message-input-container">
+                        <input type="text" id="messageInput" placeholder="Viết tin nhắn..." autocomplete="off">
+                        <div class="icon-btn emoji-wrapper" id="emojiBtn" title="Biểu tượng cảm xúc">
+                            <img src="https://cdn-icons-png.flaticon.com/128/4989/4989500.png"
+                                title="Biểu tượng cảm xúc" alt="emoji" style="width: 20px; height: 20px;">
+                            <div class="emoji-popup" id="emojiPopup">
+                                <!-- Hàng 1 -->
+                                <span class="emoji">😀</span> <!-- mặt cười -->
+                                <span class="emoji">😂</span> <!-- cười ra nước mắt -->
+                                <span class="emoji">😍</span> <!-- yêu thích -->
+                                <span class="emoji">😎</span> <!-- ngầu -->
+                                <span class="emoji">😊</span> <!-- mỉm cười -->
+
+                                <!-- Hàng 2 -->
+                                <span class="emoji">👍</span> <!-- like -->
+                                <span class="emoji">❤️</span> <!-- trái tim -->
+                                <span class="emoji">🤔</span> <!-- suy nghĩ -->
+                                <span class="emoji">👏</span> <!-- vỗ tay -->
+                                <span class="emoji">🙏</span> <!-- cảm ơn -->
+
+                                <!-- Hàng 3 -->
+                                <span class="emoji">😢</span> <!-- buồn -->
+                                <span class="emoji">😡</span> <!-- tức giận -->
+                                <span class="emoji">😮</span> <!-- ngạc nhiên -->
+                                <span class="emoji">🥰</span> <!-- yêu thích lãng mạn -->
+                                <span class="emoji">🎉</span> <!-- tếu táo, hài hước -->
+                            </div>
+                        </div>
+                        <div class="icon-btn attachment-wrapper" id="attachBtn" title="">
+                            <img src="https://cdn-icons-png.flaticon.com/128/9293/9293648.png" title="Đính kèm"
+                                alt="Đính kèm" style="width: 20px; height: 20px;">
+                            <!-- <div class="attachment-popup" id="attachmentPopup">
+                            <div class="attachment-item" onclick="document.getElementById('fileInput').click()"><img
+                                    class="img-item" src="https://cdn-icons-png.flaticon.com/128/5447/5447285.png"
+                                    title="" alt="Gửi" style="width: 20px; height: 20px;">Gửi tập
+                                tin</div>
+                        </div> -->
+                        </div>
+                        <div class="attachment-popup" id="attachmentPopup">
+                            <div class="attachment-item" onclick="document.getElementById('fileInput').click()"><img
+                                    class="img-item" src="https://cdn-icons-png.flaticon.com/128/5447/5447285.png"
+                                    title="" alt="Gửi" style="width: 20px; height: 20px;">Gửi tập
+                                tin</div>
+                        </div>
+                        <button class="send-btn" onclick="sendMessage()">
+                            <img src="https://cdn-icons-png.flaticon.com/128/11600/11600263.png" title="Gửi" alt="Gửi"
+                                style="width: 20px; height: 20px;">
+                        </button>
+
+                        <input type="file" id="fileInput" style="display:none" onchange="uploadImage()" />
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="chat-bottom">
+                <div class="logout-note" id="logoutNote"></div>
+                <div id="restartChatBtn" style="display: none; padding: 0 20px 20px;">
+                    <button onclick="restartChat()"
+                        style="width: 100%; background-color: #000; color: white; padding: 10px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer;">
+                        Bắt đầu chat lại
+                    </button>
+                </div>
+                <div class="powered-by">
+                    <span style="color: #888;">Powered by</span>
+                    <img src="https://cdn-icons-png.flaticon.com/128/10503/10503384.png" alt="LiveChat logo"
+                        class="powered-logo" />
+                    <strong>LiveChat</strong>
+                </div>
+            </div>
+            <audio id="notifSound" src="./image/arpeggio-467.mp3" preload="auto"></audio>
+        </div>
+        <!-- Firebase -->
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+        <script>
+            let savedRange = null;
+            function toggleTheme() {
+                const isDark = document.getElementById("themeToggle").checked;
+                const chatBox = document.getElementById("chatBox");
+                const themeIcon = document.getElementById("themeIcon");
+
+                chatBox.classList.toggle("dark-theme", isDark);
+
+                // Đổi icon
+                themeIcon.src = isDark
+                    ? "https://cdn-icons-png.flaticon.com/128/4489/4489231.png" // icon moon
+                    : "https://cdn-icons-png.flaticon.com/128/4623/4623236.png"; // icon sun
+            }
+
+            // window.onload = function () {
+            //     document.getElementById("notifSound").volume = 0.8; // Giảm âm lượng còn 80%
+            // };
+
+            let originalTitle = document.title;
+            let titleBlinkInterval = null;
+            let isWindowFocused = true;
+
+            window.onfocus = () => {
+                isWindowFocused = true;
+                clearInterval(titleBlinkInterval);
+                titleBlinkInterval = null;
+                document.title = originalTitle;
+            };
+
+            window.onblur = () => {
+                isWindowFocused = false;
+            };
+
+            function toggleRole() {
+                const role = document.getElementById("chatRole");
+                const name = document.querySelector(".chat-name");
+
+                if (!role || !name) return;
+
+                role.classList.toggle("hidden");
+                name.classList.toggle("centered");
+            }
+
+
+            document.addEventListener("click", function (event) {
+                const menu = document.getElementById("chatMenu");
+                const toggle = document.getElementById("chatMenuToggle");
+                const wrapper = toggle.closest(".tooltip-wrapper");
+
+                if (menu.style.display === "block" && !wrapper.contains(event.target)) {
+                    menu.style.display = "none";
+                    wrapper.classList.remove("menu-open");
+                }
+            });
+
+            function toggleSoundIcon() {
+                const soundIcon = document.getElementById("soundIcon");
+                const toggle = document.getElementById("soundToggle");
+                soundIcon.src = toggle.checked ? "https://cdn-icons-png.flaticon.com/128/3721/3721868.png" : "https://cdn-icons-png.flaticon.com/128/3721/3721860.png";
+            }
+            function restartChat() {
+                localStorage.removeItem("accountStarted");
+                localStorage.removeItem("currentAccount");
+                localStorage.removeItem("chatStartTime");
+
+                document.getElementById("innerBox").style.display = "block";
+                document.getElementById("beforeChat").style.display = "block";
+                document.getElementById("accountInputSection").style.display = "block";
+                document.getElementById("accountDisplay").style.display = "block";
+
+                document.getElementById("chatContent").style.display = "none";
+                document.getElementById("chatFooter").style.display = "none";
+
+                document.getElementById("logoutNote").innerText = "";
+                document.getElementById("restartChatBtn").style.display = "none";
+            }
+
+            // Bộ đệm lưu lại nội dung trả lời cuối cùng đã nghe theo từng tài khoản
+            const lastSeenReplyId = {};
+            const firstLoadDone = {}; // ⚠️ Biến này để kiểm soát trạng thái lần đầu load
+            function listenMessages() {
+                db.ref("messages").on("value", snapshot => {
+                    const data = snapshot.val();
+                    [...chatContent.children].forEach(child => {
+                        if (child.id !== "accountDisplay") {
+                            chatContent.removeChild(child);
+                        }
+                    });
+
+                    document.getElementById("accountNumberText").textContent = currentAccount;
+                    document.getElementById("accountDisplay").style.display = "block";
+
+                    if (!data || !currentAccount) return;
+
+                    const TIME_THRESHOLD = 2 * 60 * 1000; // 2 phút
+
+                    let latestReply = null;
+                    let latestReplyId = null;
+
+                    const sortedMessages = Object.values(data)
+                        .filter(msg => msg.account === currentAccount)
+                        .sort((a, b) => (a.time || 0) - (b.time || 0));
+
+                    sortedMessages.forEach((msg, index) => {
+                        // 👉 Tin nhắn người dùng
+                        if (msg.message && msg.message.trim() !== "") {
+                            const userWrap = document.createElement("div");
+                            userWrap.className = "message-wrapper user-message-wrapper";
+
+                            const bubbleGroup = document.createElement("div");
+                            bubbleGroup.style.display = "flex";
+                            bubbleGroup.style.flexDirection = "column";
+                            bubbleGroup.style.alignItems = "flex-end";
+
+                            // 🕒 Tạo thời gian hover
+                            const timeLabel = document.createElement("div");
+                            timeLabel.className = "message-hover-time";
+                            const t = new Date(msg.time || Date.now());
+                            timeLabel.innerText = ` ${t.getHours().toString().padStart(2, '0')}:${t.getMinutes().toString().padStart(2, '0')}`;
+
+                            const userBubble = document.createElement("div");
+                            if (msg.message.trim().startsWith('<img')) {
+                                userBubble.className = "message user-image";
+                                userBubble.innerHTML = msg.message;
+                            } else {
+                                userBubble.className = "message user-text";
+                                userBubble.textContent = msg.message;
+                            }
+
+                            // 👉 Chỉ hiện trạng thái nếu tin tiếp theo cách xa
+                            const nextMsg = sortedMessages[index + 1];
+                            const currentTime = msg.time || Date.now();
+                            let showStatus = false;
+
+                            if (!nextMsg) {
+                                showStatus = true; // cuối danh sách
+                            } else {
+                                const nextTime = nextMsg.time || Date.now();
+                                if (nextTime - currentTime > TIME_THRESHOLD) {
+                                    showStatus = true;
+                                }
+                            }
+
+                            bubbleGroup.appendChild(timeLabel);
+                            bubbleGroup.appendChild(userBubble);
+
+                            if (showStatus) {
+                                const status = document.createElement("div");
+                                status.className = "message-status";
+                                status.innerText = msg.read ? "Đã xem" : "Đã gửi";
+                                status.style.fontSize = "11px";
+                                status.style.color = "#888";
+                                status.style.marginTop = "4px";
+                                status.style.textAlign = "right";
+                                bubbleGroup.appendChild(status);
+                            }
+
+                            userWrap.appendChild(bubbleGroup);
+                            chatContent.appendChild(userWrap);
+                        }
+                        // 👉 Tin nhắn admin
+                        if (msg.reply) {
+                            const adminWrap = document.createElement("div");
+                            adminWrap.className = "admin-message-wrapper";
+
+                            const avatar = document.createElement("div");
+                            avatar.className = "avatar-wrapper";
+                            avatar.innerHTML = `<img src="https://cdn-icons-png.flaticon.com/128/10503/10503384.png" alt="Admin" class="avatar-logo">`;
+
+                            let bubble;
+                            if (msg.reply.trim().startsWith('<img')) {
+                                bubble = document.createElement("div");
+                                bubble.className = "message user-image";
+                                bubble.innerHTML = msg.reply;
+                            } else if (/^\d{6,}$/.test(msg.reply.trim())) {
+                                bubble = document.createElement("div");
+                                bubble.className = "account-info-box";
+                                bubble.innerHTML = `
+            <div class="account-label">Số Tài Khoản:</div>
+            <div class="account-value">${msg.reply}</div>
+        `;
+                            } else {
+                                bubble = document.createElement("div");
+                                bubble.className = "admin-message-bubble";
+                                bubble.textContent = msg.reply;
+
+                                // ✅ đảm bảo style hoạt động nếu CSS chưa apply kịp
+                                bubble.style.whiteSpace = "pre-wrap";
+                                bubble.style.wordBreak = "break-word";
+                                bubble.style.overflowWrap = "break-word";
+                                bubble.style.maxWidth = "75%";
+                                bubble.style.display = "inline-block";
+                            }
+
+                            // 🕒 Thêm thời gian hover giống user
+                            const timeLabel = document.createElement("div");
+                            timeLabel.className = "message-hover-time";
+                            const t = new Date(msg.time || Date.now());
+                            timeLabel.innerText = `${t.getHours().toString().padStart(2, '0')}:${t.getMinutes().toString().padStart(2, '0')}`;
+
+                            // ✅ Nhóm bubble và thời gian lại để quản lý tốt hơn
+                            const bubbleGroup = document.createElement("div");
+                            bubbleGroup.style.display = "flex";
+                            bubbleGroup.style.flexDirection = "column";
+                            bubbleGroup.style.alignItems = "flex-start";
+                            bubbleGroup.style.flex = "1";
+
+                            bubbleGroup.appendChild(timeLabel);
+                            bubbleGroup.appendChild(bubble);
+
+                            adminWrap.appendChild(avatar);
+                            adminWrap.appendChild(bubbleGroup);
+                            chatContent.appendChild(adminWrap);
+
+                            latestReply = msg.reply;
+                            latestReplyId = msg.time || msg.message + msg.reply;
+                        }
+                    });
+                    // Gắn sự kiện click ảnh để mở popup
+                    setTimeout(() => {
+                        document.querySelectorAll(".message img").forEach(img => {
+                            img.style.cursor = "pointer";
+                            img.onclick = () => showImagePopup(img.src);
+                        });
+                    }, 0);
+
+                    // Cuộn xuống cuối khung chat
+                    document.getElementById("scroll-wrapper").scrollTop =
+                        document.getElementById("scroll-wrapper").scrollHeight;
+
+                    // Phát âm thanh & đổi tiêu đề nếu có phản hồi mới
+                    if (!firstLoadDone[currentAccount]) {
+                        lastSeenReplyId[currentAccount] = latestReplyId;
+                        firstLoadDone[currentAccount] = true;
+                        return;
+                    }
+
+                    if (
+                        latestReply &&
+                        latestReplyId &&
+                        latestReplyId !== lastSeenReplyId[currentAccount]
+                    ) {
+                        if (document.getElementById("soundToggle").checked) {
+                            const audio = document.getElementById("notifSound");
+                            audio.play().catch(err => console.error("Không phát âm:", err));
+                        }
+
+                        if (!isWindowFocused && !titleBlinkInterval) {
+                            let blink = false;
+                            titleBlinkInterval = setInterval(() => {
+                                document.title = blink
+                                    ? "Bạn có tin nhắn mới!"
+                                    : originalTitle;
+                                blink = !blink;
+                            }, 1000);
+                        }
+
+                        lastSeenReplyId[currentAccount] = latestReplyId;
+                    }
+                });
+            }
+            //
+            document.getElementById("chatMenuToggle").onclick = function () {
+                const menu = document.getElementById("chatMenu");
+                const wrapper = this.closest('.tooltip-wrapper');
+
+                if (menu.style.display === "none") {
+                    menu.style.display = "block";
+                    wrapper.classList.add("menu-open");
+                } else {
+                    menu.style.display = "none";
+                    wrapper.classList.remove("menu-open");
+                }
+            };
+
+
+            //
+            function minimizeChat() {
+                document.body.style.overflow = "auto";
+                chatBox.style.display = "none";
+                document.querySelector('.chat-toggle').style.display = "block";
+            }
+
+            const firebaseConfig = {
+                databaseURL: "https://chatbot-support-e1774-default-rtdb.asia-southeast1.firebasedatabase.app",
+            };
+            firebase.initializeApp(firebaseConfig);
+            const db = firebase.database();
+
+            const chatBox = document.getElementById("chatBox");
+            const beforeChat = document.getElementById("beforeChat");
+            const chatContent = document.getElementById("chatContent");
+            const chatFooter = document.getElementById("chatFooter");
+            const messageInput = document.getElementById("messageInput");
+            const accountInput = document.getElementById("account");
+            const logoutNote = document.getElementById("logoutNote");
+
+            window.currentAccount = null;
+
+            let logoutTimer;
+
+            function toggleChat() {
+
+                document.body.style.overflow = "hidden"; // Ngăn cuộn nền
+
+                const toggleBtn = document.querySelector('.chat-toggle');
+                chatBox.style.display = "flex";
+                toggleBtn.style.display = "none";
+
+                if (window.recoverChat) {
+                    // ✅ Khôi phục lại chat đã lưu trong 10s
+                    beforeChat.style.display = "none";
+                    chatContent.style.display = "block";
+                    chatFooter.style.display = "block";
+                    document.getElementById("innerBox").style.display = "none";
+                    document.getElementById("accountNumberText").textContent = currentAccount;
+                    document.getElementById("accountDisplay").style.display = "block";
+                    document.getElementById("accountInputSection").style.display = "none";
+
+                    listenMessages();
+                    resetLogoutTimer();
+                    document.getElementById("messageInput").focus();
+
+                    window.recoverChat = false;
+                    return;
+                }
+
+                // Trường hợp bình thường (chưa chat)
+                beforeChat.style.display = "block";
+                chatContent.style.display = "none";
+                chatFooter.style.display = "none";
+                document.getElementById("innerBox").style.display = "block";
+                document.getElementById("restartChatBtn").style.display = "none";
+            }
+
+            function startChat() {
+                currentAccount = accountInput.value.trim();
+                if (!currentAccount) return alert("Vui lòng nhập số tài khoản");
+
+                beforeChat.style.display = "none";
+                chatContent.style.display = "block";
+                chatFooter.style.display = "block";
+                listenMessages();
+                resetLogoutTimer();
+                // Hiển thị số tài khoản người dùng đã nhập
+                document.getElementById("accountInputSection").style.display = "none";
+                document.getElementById("chatContent").style.display = "block";
+
+                // ✅ Ẩn khung trắng (inner-box)
+                document.getElementById("innerBox").style.display = "none";
+
+                document.getElementById("accountNumberText").textContent = currentAccount;
+                localStorage.setItem("accountStarted", "true");
+                localStorage.setItem("currentAccount", currentAccount);
+                localStorage.setItem("chatStartTime", Date.now());
+
+                document.getElementById("accountDisplay").style.display = "block";
+                // ✅ THÊM DÒNG NÀY VÀO:
+                listenMessages();
+
+                document.getElementById("messageInput").focus();
+                // Gửi tin nhắn admin tự động
+                const newRef = db.ref("messages").push();
+                newRef.set({
+                    account: currentAccount,
+                    message: "",
+                    reply: "Bạn thắng mà chưa nhận được tiền thưởng ạ? Chụp bill có mã giao dịch ad check cho nhé!",
+                    time: Date.now()   // 👈 Dòng này hoàn toàn hợp lệ
+                });
+            }
+
+            function resetLogoutTimer() {
+                clearTimeout(logoutTimer);
+                logoutTimer = setTimeout(() => {
+                    currentAccount = null;
+
+                    [...chatContent.children].forEach(child => {
+                        if (child.id !== "accountDisplay") {
+                            chatContent.removeChild(child);
+                        }
+                    });
+
+                    chatFooter.style.display = "none";
+                    document.getElementById("accountDisplay").style.display = "none";
+                    document.getElementById("chatContent").style.display = "none";
+
+                    // ✅ HIỆN LẠI KHUNG LƯU Ý VÀ KHUNG NGOÀI
+                    document.getElementById("innerBox").style.display = "block";
+                    document.getElementById("beforeChat").style.display = "block";
+
+                    // ✅ Ẩn phần nhập tài khoản
+                    const inputSection = document.getElementById("accountInputSection");
+                    if (inputSection) inputSection.style.display = "none";
+
+                    document.getElementById("logoutNote").innerText =
+                        "Phiên chat đã bị đóng lại do người dùng không hoạt động trong khoảng thời gian dài.";
+                    document.getElementById("restartChatBtn").style.display = "block";
+                }, 10 * 60 * 1000); // 1 phút
+            }
+
+
+            // function sendMessage() {
+            //     const msg = messageInput.value.trim();
+            //     if (!msg || !currentAccount) return;
+
+            //     const newRef = db.ref("messages").push();
+            //     newRef.set({ account: currentAccount, message: msg, reply: "" });
+            //     messageInput.value = "";
+
+            //     // 🔁 Sau khi gửi → làm mờ nút GỬI lại
+            //     const sendButton = document.querySelector(".send-btn");
+            //     sendButton.disabled = true;
+            //     sendButton.style.opacity = "0.5";
+
+            //     resetLogoutTimer();
+            //     console.log("Đang gửi:", msg);
+            // }
+
+
+            function uploadImage() {
+                const file = document.getElementById("fileInput").files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const newRef = db.ref("messages").push();
+                    newRef.set({
+                        account: currentAccount,
+                        message: `<img src="${e.target.result}" class="raw-image" />`,
+                        reply: "",
+                        time: Date.now()  // ✅ THÊM DÒNG NÀY
+                    });
+                };
+                reader.readAsDataURL(file);
+                document.getElementById("accountNumberText").textContent = currentAccount;
+                document.getElementById("accountDisplay").style.display = "block";
+
+            }
+            // document.addEventListener("DOMContentLoaded", function () {
+            //     const attachBtn = document.getElementById("attachBtn");
+            //     const attachPopup = document.getElementById("attachmentPopup");
+            //     const emojiBtn = document.getElementById("emojiBtn");
+            //     const emojiPopup = document.getElementById("emojiPopup");
+            //     const messageInput = document.getElementById("messageInput");
+            //     // Tự giãn textarea khi gõ
+            //     messageInput.addEventListener("input", function () {
+            //         this.style.height = "auto";          // reset
+            //         this.style.height = this.scrollHeight + "px"; // cao vừa nội dung
+            //     });
+
+            //     const sendButton = document.querySelector(".send-btn");
+
+            //     messageInput.addEventListener("keydown", function (e) {
+            //         if (e.key === "Enter" && !e.shiftKey) {
+            //             e.preventDefault();
+            //             if (this.value.trim()) {
+            //                 sendMessage();
+            //             }
+            //         }
+            //     });
+
+            //     attachBtn.addEventListener("click", function (e) {
+            //         e.stopPropagation();
+            //         attachPopup.style.display = attachPopup.style.display === "flex" ? "none" : "flex";
+            //         emojiPopup.style.display = "none";
+            //     });
+
+            //     emojiBtn.addEventListener("click", function (e) {
+            //         e.stopPropagation();
+            //         emojiPopup.style.display = emojiPopup.style.display === "flex" ? "none" : "flex";
+            //         attachPopup.style.display = "none";
+            //     });
+
+            //     document.querySelectorAll(".emoji").forEach(emoji => {
+            //         emoji.addEventListener("click", () => {
+            //             messageInput.value += emoji.textContent;
+            //             emojiPopup.style.display = "none";
+            //             messageInput.focus();
+            //             sendButton.disabled = messageInput.value.trim() === "";
+            //         });
+            //     });
+
+            //     document.addEventListener("click", function () {
+            //         attachPopup.style.display = "none";
+            //         emojiPopup.style.display = "none";
+            //     });
+
+            //     messageInput.addEventListener("input", function () {
+            //         const hasContent = this.value.trim().length > 0;
+            //         sendButton.disabled = !hasContent;
+            //         sendButton.style.opacity = hasContent ? "1" : "0.5";
+            //     });
+
+
+            //     sendButton.disabled = true; // mặc định ban đầu không cho bấm gửi
+            // });
+            document.addEventListener("DOMContentLoaded", function () {
+                const messageInput = document.getElementById("messageInput");
+
+                // Tạo 1 span ảo để đo chiều cao chữ
+                const mirror = document.createElement("span");
+                mirror.style.position = "absolute";
+                mirror.style.visibility = "hidden";
+                mirror.style.whiteSpace = "pre-wrap";
+                mirror.style.wordWrap = "break-word";
+                mirror.style.lineHeight = "18px";
+                mirror.style.padding = "10px";
+                mirror.style.width = messageInput.offsetWidth + "px";
+                mirror.style.fontSize = "14px";
+                mirror.style.fontFamily = window.getComputedStyle(messageInput).fontFamily;
+
+                document.body.appendChild(mirror);
+
+                const defaultHeight = messageInput.offsetHeight;
+
+                function resizeInput() {
+                    mirror.textContent = messageInput.value || " "; // không được để rỗng
+                    mirror.style.width = messageInput.offsetWidth + "px";
+
+                    const newHeight = Math.min(mirror.scrollHeight, 120); // max 120px
+                    messageInput.style.height = newHeight + "px";
+                    messageInput.style.overflowY = mirror.scrollHeight > 120 ? "auto" : "hidden";
+                }
+
+                // Gõ sẽ resize lên
+                messageInput.addEventListener("input", resizeInput);
+
+                // Gửi xong thu lại
+                const originalSendMessage = window.sendMessage;
+                window.sendMessage = function () {
+                    originalSendMessage();
+                    messageInput.style.height = defaultHeight + "px";
+                    messageInput.scrollTop = 0;
+                };
+            });
+            document.addEventListener("DOMContentLoaded", function () {
+                const inputReal = document.getElementById("messageInput");
+                const editor = document.createElement("div");
+                editor.className = "message-editor";
+                editor.setAttribute("contenteditable", "true");
+                editor.setAttribute("data-placeholder", "Viết tin nhắn...");
+                inputReal.style.display = "none"; // ẩn hoàn toàn input cũ
+
+                const emojiBtn = document.getElementById("emojiBtn");
+                const attachBtn = document.getElementById("attachBtn");
+                const emojiPopup = document.getElementById("emojiPopup");
+                const attachPopup = document.getElementById("attachmentPopup");
+                const sendButton = document.querySelector(".send-btn");
+
+                // Chèn editor vào đúng vị trí
+                emojiBtn.parentNode.insertBefore(editor, emojiBtn);
+
+                // Resize và đồng bộ
+                function syncAndResize() {
+                    inputReal.value = editor.innerText.trim(); // chỉ để server đọc
+                    editor.style.height = "auto";
+                    const newHeight = Math.min(editor.scrollHeight, 120);
+                    editor.style.height = newHeight + "px";
+                    document.getElementById("scroll-wrapper").style.paddingBottom = (newHeight + 40) + "px";
+
+                    const hasContent = editor.innerText.trim().length > 0;
+                    sendButton.disabled = !hasContent;
+                    sendButton.style.opacity = hasContent ? "1" : "0.5";
+                }
+                function saveCursorPosition() {
+                    const selection = window.getSelection();
+                    if (selection.rangeCount > 0) {
+                        const range = selection.getRangeAt(0);
+                        if (editor.contains(range.startContainer)) {
+                            savedRange = range;
+                        }
+                    }
+                }
+
+                editor.addEventListener("keyup", saveCursorPosition);
+                editor.addEventListener("mouseup", saveCursorPosition);
+                editor.addEventListener("focus", saveCursorPosition);
+
+
+                editor.addEventListener("input", syncAndResize);
+
+                editor.addEventListener("keydown", function (e) {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        if (editor.innerText.trim()) sendMessage();
+                    }
+                });
+
+                // Gửi xong thì reset editor
+                const originalSendMessage = window.sendMessage;
+                window.sendMessage = function () {
+                    const text = editor.innerText.trim();
+                    if (!text || !window.currentAccount) return;
+
+                    const newRef = db.ref("messages").push();
+                    newRef.set({
+                        account: window.currentAccount,
+                        message: text,
+                        reply: "",
+                        time: Date.now()
+                    });
+
+
+                    editor.innerText = "";
+                    editor.setAttribute("data-placeholder", "Viết tin nhắn...");
+                    syncAndResize();
+                    resetLogoutTimer();
+                };
+
+                // Xử lý emoji click
+                document.querySelectorAll(".emoji").forEach(emoji => {
+                    emoji.addEventListener("click", () => {
+                        if (savedRange) {
+                            const selection = window.getSelection();
+                            selection.removeAllRanges();
+                            selection.addRange(savedRange);
+
+                            // Tạo emoji node
+                            const emojiNode = document.createTextNode(emoji.textContent);
+                            savedRange.deleteContents();
+                            savedRange.insertNode(emojiNode);
+
+                            // Cập nhật con trỏ sau emoji
+                            savedRange.setStartAfter(emojiNode);
+                            savedRange.collapse(true);
+
+                            // Cập nhật lại selection
+                            selection.removeAllRanges();
+                            selection.addRange(savedRange);
+
+                            // Lưu lại mới
+                            saveCursorPosition();
+                        }
+
+                        emojiPopup.style.display = "none";
+                        editor.focus();
+                        syncAndResize();
+                    });
+                });
+
+
+                // Hiện/tắt popup emoji
+                emojiBtn.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    emojiPopup.style.display = emojiPopup.style.display === "flex" ? "none" : "flex";
+                    attachPopup.style.display = "none";
+                });
+
+                // Hiện/tắt popup đính kèm
+                attachBtn.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    attachPopup.style.display = attachPopup.style.display === "flex" ? "none" : "flex";
+                    emojiPopup.style.display = "none";
+                });
+
+                // Ẩn popup khi click bên ngoài
+                document.addEventListener("click", function () {
+                    emojiPopup.style.display = "none";
+                    attachPopup.style.display = "none";
+                });
+
+                // Khởi tạo trạng thái ban đầu
+                sendButton.disabled = true;
+                sendButton.style.opacity = "0.5";
+                syncAndResize();
+            });
+            // Hàm mở popup ảnh
+            function showImagePopup(src) {
+                const overlay = document.getElementById("imagePopupOverlay");
+                const img = document.getElementById("popupImage");
+
+                img.src = src;
+                overlay.style.display = "flex";
+
+                enableImageZoom(); // ✅ gọi zoom logic mỗi lần mở ảnh
+            }
+
+            // Đóng popup khi click ra ngoài
+            document.addEventListener("DOMContentLoaded", () => {
+                const overlay = document.getElementById("imagePopupOverlay");
+                if (overlay) {
+                    overlay.addEventListener("click", () => {
+                        overlay.style.display = "none";
+                    });
+                }
+
+                enableImageZoom(); // Gọi 1 lần khi load
+            });
+
+            let zoomLevel = 1;
+
+            function enableImageZoom() {
+                const img = document.getElementById("popupImage");
+
+                // Reset về mặc định mỗi lần mở ảnh
+                zoomLevel = 1;
+                img.style.transform = "scale(1)";
+
+                // Zoom bằng cuộn chuột
+                img.onwheel = (e) => {
+                    e.preventDefault();
+                    const zoomSpeed = 0.1;
+
+                    if (e.deltaY < 0) {
+                        zoomLevel = Math.min(zoomLevel + zoomSpeed, 5);
+                    } else {
+                        zoomLevel -= zoomSpeed;
+
+                        if (zoomLevel <= 1) {
+                            zoomLevel = 1;
+                        }
+                    }
+
+                    img.style.transform = `scale(${zoomLevel})`;
+                };
+            }
+            document.addEventListener("DOMContentLoaded", function () {
+                const chatBox = document.getElementById("chatBox");
+                const toggleBtn = document.querySelector('.chat-toggle');
+
+                const chatStarted = localStorage.getItem("accountStarted") === "true";
+                const savedAccount = localStorage.getItem("currentAccount");
+                const chatStartTime = parseInt(localStorage.getItem("chatStartTime") || "0", 10);
+                const now = Date.now();
+
+                chatBox.style.display = "none";
+                toggleBtn.style.display = "block";
+
+                if (chatStarted && savedAccount && (now - chatStartTime <= 10 * 1000)) {
+                    window.recoverChat = true;
+                    window.currentAccount = savedAccount;
+                } else {
+                    localStorage.removeItem("accountStarted");
+                    localStorage.removeItem("currentAccount");
+                    localStorage.removeItem("chatStartTime");
+                }
+            });
+
+        </script>
+        <!-- Popup ảnh -->
+        <div id="imagePopupOverlay" style="
+    display:none;
+    position:fixed;
+    top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.8);
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+">
+            <img id="popupImage" style="
+        max-width:90%;
+        max-height:90%;
+        box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        border-radius: 8px;
+        background: white;
+    " />
+        </div>
+    </body>
+
+    </html>
 </body>
 
 </html>
