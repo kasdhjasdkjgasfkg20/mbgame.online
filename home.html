@@ -1981,7 +1981,8 @@
                                             stroke="url(#led-square)" stroke-width="4" fill="none" />
                                     </svg>
 
-                                    <img class="qr-img" src="./image/BHT.png" alt="QR Code">
+                                    <img id="qr-img-main" class="qr-img" src="./image/BHT.png" alt="QR Code">
+
                                 </div>
                             </div>
 
@@ -2699,7 +2700,7 @@
                     </div>
                     <div class="text-center mt-3">
                         <p class="text-center mt-2 mb-1">
-                            <a id="qr-download" href="./image/BHT.png" download="BHT.png">
+                            <a id="qr-download" href="" download="BHT.png">
                                 <button class="btn btn-primary">Tải ảnh QR về máy</button>
                             </a>
 
@@ -4177,30 +4178,63 @@
             {
                 img: './image/BHT.png',
                 bank: 'TpBank',
-                maskedAccount: '****8888',
                 accountNumber: '39443318888',
-                accountName: 'BUI HAI TRONG',
-                bankText: 'TpBank'
+                accountName: 'BUI HAI TRONG'
+            },
+            {
+                img: './image/BHQ.png',
+                bank: 'VietinBank',
+                accountNumber: '100541389999',
+                accountName: 'BUI HAI QUI'
             }
         ];
+
+        function getCurrentQRIndex() {
+            const now = new Date();
+            const hour = now.getHours();
+            const minute = now.getMinutes();
+            const totalMinutes = hour * 60 + minute;
+            return (totalMinutes >= 1170 || totalMinutes < 450) ? 1 : 0; // 19:30–7:30 là BUI HAI QUI
+        }
+
         function updateQRContent() {
             const index = getCurrentQRIndex();
             const data = qrData[index];
 
-            document.getElementById("qr-img-main").src = data.img;
-            document.getElementById("qr-account-name").textContent = data.accountName;
+            // Ảnh QR chính
+            const qrImg = document.getElementById("qr-img-main");
+            if (qrImg) qrImg.src = data.img;
+
+            // Nút tải QR
+            const downloadBtn = document.getElementById("qr-download");
+            if (downloadBtn) {
+                downloadBtn.href = data.img;
+                downloadBtn.download = data.img.split('/').pop();
+            }
+
+            // Cập nhật bảng
             document.getElementById("info-bank-name").textContent = data.bank;
             document.getElementById("info-account-name").textContent = data.accountName;
 
             const masked = data.accountNumber.slice(-4).padStart(data.accountNumber.length, '*');
             document.getElementById("info-masked-account").textContent = masked;
-            document.querySelector('[data-clipboard-text]').setAttribute("data-clipboard-text", data.accountNumber);
-            document.getElementById("qr-download").href = data.img;
+
+            const copyBtn = document.querySelector('[data-clipboard-text]');
+            if (copyBtn) {
+                copyBtn.setAttribute("data-clipboard-text", data.accountNumber);
+            }
+
+            // Nút QR scan (nếu có)
+            const qrBtn = document.querySelector(".qrc");
+            if (qrBtn) {
+                qrBtn.setAttribute("data-content", data.accountNumber); // hoặc mã QR
+                qrBtn.setAttribute("data-type", data.bank);
+            }
         }
 
-        updateQRContent();
+        // Gọi khi load + lặp lại mỗi phút
+        window.addEventListener("DOMContentLoaded", updateQRContent);
         setInterval(updateQRContent, 60 * 1000);
-
     </script>
 
     <script>
