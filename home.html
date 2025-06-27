@@ -1986,7 +1986,7 @@
                             </div>
 
                             <div class="text-center mb-3">
-                                <span id="qr-account-name">BUI HAI TRONG</span><br />
+                                <!-- <span id="qr-account-name">BUI HAI TRONG</span><br /> -->
                                 Thời gian hoạt động:
                                 <span style="display: inline-flex; align-items: center;">
                                     <div style="color: green;">● Online</div>
@@ -2028,17 +2028,23 @@
                                     hàng ngày, vì vậy hãy chú ý load lại web để lấy QR mới nhất.
                                 </p> -->
                                 <p>
-                                    Sau thời gian 1 - 3 phút nếu
+                                    Nếu kết quả
                                     <strong>
                                         thắng
                                     </strong>
-                                    mà bạn vẫn chưa nhận được tiền thưởng.
+                                    tiền thưởng sẽ tự động chuyển vào tài khoản của bạn trong
+                                    <strong>
+                                        1 - 3
+                                    </strong>
+                                    phút.
                                 </p>
-                                Vui lòng
-                                <strong>nhắn cho nhân viên hỗ trợ.</strong>
+                                Nếu sau thời gian 1 - 3 phút mà bạn vẫn
+                                <strong>chưa nhận được tiền thưởng,</strong>
+                                vui lòng nhắn cho nhân viên hỗ trợ ở
+                                <strong>góc bên phải!</strong>
                                 </p>
                             </div>
-                            <div class="table-responsive mb-3">
+                            <div class="table-responsive mb-3 hiddenmb">
                                 <!-- hiddenmb: khi mb-3 có hiddenmb sẽ không hiển thị bảng ở mobile -->
                                 <table
                                     class="table card-table table-vcenter text-nowrap table-bordered table-striped text-center">
@@ -2102,11 +2108,10 @@
                                 Nếu quá 5 phút chưa nhận được tiền vui lòng liên hệ nhân viên hỗ trợ để kiểm tra.
                             </div>
                             <div class="text-center mb-3">
-                                <a href="https://t.me/mbgamesupport" target="_blank" style="text-decoration: none;">
-                                    <button class="btn btn-info" id="supportBtn">
-                                        <i class="fa fa-users" aria-hidden="true"></i>
-                                        Nhân Viên Hỗ Trợ
-                                    </button>
+                                <button class="btn btn-info" id="supportBtn">
+                                    <i class="fa fa-users" aria-hidden="true"></i>
+                                    Hỗ Trợ
+                                </button>
                                 </a>
                             </div>
 
@@ -4281,6 +4286,17 @@
             requestAnimationFrame(animate);
         });
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const supportBtn = document.getElementById("supportBtn");
+            if (supportBtn) {
+                supportBtn.addEventListener("click", function () {
+                    toggleChat();
+                });
+            }
+        });
+    </script>
+
 </body>
 
 </html>
